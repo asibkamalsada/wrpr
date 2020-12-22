@@ -1,0 +1,39 @@
+student/1
+inClass/3 %student,class/2
+
+teacher/1
+teaches/2 %teacher,subject
+classTeacher/3 %teacher,class/2
+maxHours/2 %teacher, maximum number of taught slots per week
+
+subject/1
+
+%this rule actually distributes the correct subjects with the respecting amount of hours per week for each class
+%it also implements the correct amount of schoolhours a class has in a week 
+subjectTimes/3 %subject,Klassenstufe,hours per week
+
+class/2 %Klassenstufe,konkrete Klasse
+
+
+%room/1 %this one looks like it is not really needed if every room is classified
+
+%these rooms should be used by their respective subject. if there are no e.g. physRooms try chemRooms or bioRooms or standardRooms (descending order maybe?)
+physRoom/1
+chemRoom/1
+bioRoom/1
+
+pcRoom/1
+musicRoom/1
+artRoom/1
+gym/1
+
+standardRoom/1
+
+
+weekday/1
+slot/1 % sowas wie 1.,2.,3. ... Stunde
+
+%weekday, slot, teacher, class/2, subject, room
+timetable/7
+
+% A/B Woche nicht berücksichtigt
