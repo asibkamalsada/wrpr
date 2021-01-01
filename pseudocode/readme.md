@@ -1,6 +1,6 @@
 # Überblick
 
-Nachfolgend die Grundlagen zum "Modell".
+Nachfolgend die Grundlagen zur Problemmodellierung.
 
 ## Grundlagen
 
@@ -8,9 +8,9 @@ Es gibt folgende grundlegenden Objekte, Relationen und Grundregeln:
 
 - Zeitslot
   - Es gibt bestimmte Zeiten, zu denen etwas stattfinden darf
-  - Zeiträume haben **Abstände** zueinander
+  - Zeiträume haben **Abstände** zueinander (Anzahl Slots, die dazwischen liegen)
   - Zeiräume haben einen bestimmten **Tag**
-  - Ein Zeitslot kann ein oder zwei Zeiteinheiten (quasi Zeitstunden zum zählen für Lehrer und Stundentafeln) haben
+  - Ein Zeitslot kann ein oder zwei Zeiteinheiten (Schulstunden zum zählen für Lehrer und Stundentafeln) haben
 - Stunde
   - Eine Stunde ist etwas, was zu einer bestimmten Zeit in einem bestimmten Raum stattfindet
   - Für jede Stunde gibt es mindestens einen Lehrer
@@ -60,11 +60,13 @@ Es gibt folgende grundlegenden Objekte, Relationen und Grundregeln:
 |          |         \                |
 |        Zeit         |               |
 |                     |               |
-|------------------- Fach ------- Klassenstufe
++------------------- Fach ------- Klassenstufe
 ```
 
 Einige Entitäten haben ein "Kürzel", welches im Logikprogramm als Atom verwendet wird:
 
+- Klassenstufe (5, 6, ...)
+- Klasse (a, b, ...)
 - Lehrer
 - Fächer
 - Kurse
@@ -96,8 +98,8 @@ Für Optimierungen und Erweiterungen:
 - Regeln für Lehrer
   - Ein Lehrer unterrichtet maximal n Stunden pro Woche
 - Jeder Lehrer hat einen freien Tag
-- Ein Lehrer hat maximal 4 Stunden hintereinander
-- Ein Lehrer hat max. 3 Freistunden hintereinander
+- Ein Lehrer hat maximal zwei Stunden (egal ob Einzel- oder Doppelstunden) hintereinander
+- Ein Lehrer hat max. zwei Freistunden hintereinander
 
 
 ## Optimierungsregeln
@@ -159,20 +161,33 @@ Für die Erstellung von Stundenplänen:
 - lesson_opt
   - Optimierungsregeln für die Zeitplanung
 
-## Predikate
+## Variablen und Prädikate
 
-- class/2 - Klassenstufe, Klassenbezeichnung (einmalig, z.B. c4a o.ä.)
-- teacher/1 - Lehrer
-- teaches/2 - Lehrer unterrichtet Fach
-- classTeacher/2 - Lehrer, Klasse
-- maxHours/2 - Lehrer, maximale Anzahl Stunden
-- subject/1 - Fach
-- course/4 - Kursbezeichnung, Lehrer, Klasse, Fach
-- subjectTimes/3 - Fach, Klassenstufe, Anzahl Stunden gemäß Stundentafel
-- lesson/3 - Kurs, Zeit, Raum
-- room/1 - Raum
-- slot/3 - Zeitslot, Tag, Zeiteinheiten
-- weekday/1 - Tag
+Konsistent verwendete Variablen:
+- Y... Klassenstufe
+- C... Klasse
+- T... Lehrer
+- S... Fach
+- L... Zeitslot (1, 2, ...)
+- W... Wochentag
+- R... Raum
+- U... Zeiteinheiten
+
+Predikate kursiv (in Sternchen) für gegeben:
+- *class(Y, C)* - Klassenstufe, Klassenbezeichnung
+- *teacher(T)* - Lehrer
+- *teaches(T, S)* - Lehrer unterrichtet Fach
+- *classTeacher(T, Y, C)* - Lehrer, class/2 (Klassenstufe, Klasse)
+- *maxHours(T, X)* - Lehrer, maximale Anzahl Stunden
+- *subject(S)* - Fach
+- course(T, Y, C, S) - Lehrer, class/2, Fach
+- *subjectTimes(S, Y, X)* - Fach, Klassenstufe, Anzahl Stunden gemäß Stundentafel
+- lesson(W, L, T, Y, C, S, R) - Tag, Zeitslot, course/4 (Lehrer, class/2, Fach), Raum
+- *room(R)* - Raum
+- *specialRoom(R, S)* - Raum, Fach (für das dieser Raum geeignet ist)
+- *slot(W, L, U)* - Tag, Zeitslot, Zeiteinheiten
+- *weekday(W)* - Wochentag
+- consecutive(W, L1, L2) - Zwei Zeitslots, die aufeinander folgen
 
 
 
