@@ -12,6 +12,11 @@ not_teached(S, Y) :- subjectTimes(S, Y, X), X=0.
 1{ course(T, Y, C, S) : teaches(T, S)  }1 :- class(Y, C), subject(S), not not_teached(S, Y).
 
 
+% Jede Klasse hat min. einen Kurs mit ihrem Klassenlehrer (der min. eine Stunde hat)
+ctcourse(Y, C) :- course(T, Y, C, S), not not_teached(S, Y), classTeacher(T, Y, C).
+:- class(Y, C), not ctcourse(Y, C).
+
+
 % Anzahl der Stunden eines Kurses
 courseHours(T, Y, C, S, H) :- subjectTimes(S, Y, H), course(T, Y, C, S).
 
