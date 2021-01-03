@@ -8,8 +8,9 @@ Es gibt folgende grundlegenden Objekte, Relationen und Grundregeln:
 
 - Zeitslot
   - Es gibt bestimmte Zeiten, zu denen etwas stattfinden darf
-  - Zeiträume haben **Abstände** zueinander (Anzahl Slots, die dazwischen liegen)
   - Zeiräume haben einen bestimmten **Tag**
+  - Zeiträume eines Tages (potentielle Schulstunden) sind durchnummeriert (1, 2, 3, ...)
+  - Zeitslots S und T eines Tages folgen aufeinander, wenn T=S+1
   - Ein Zeitslot kann ein oder zwei Zeiteinheiten (Schulstunden zum zählen für Lehrer und Stundentafeln) haben
 - Stunde
   - Eine Stunde ist etwas, was zu einer bestimmten Zeit in einem bestimmten Raum stattfindet
@@ -182,12 +183,17 @@ Predikate kursiv (in Sternchen) für gegeben:
 - *subject(S)* - Fach
 - course(T, Y, C, S) - Lehrer, class/2, Fach
 - *subjectTimes(S, Y, X)* - Fach, Klassenstufe, Anzahl Stunden gemäß Stundentafel
+- courseHours(T, Y, C, S, H) - course/4, Anzahl dessen Stunden (hergeleitet aus subjectTimes)
 - lesson(W, L, T, Y, C, S, R) - Tag, Zeitslot, course/4 (Lehrer, class/2, Fach), Raum
 - *room(R)* - Raum
 - *specialRoom(R, S)* - Raum, Fach (für das dieser Raum geeignet ist)
 - *slot(W, L, U)* - Tag, Zeitslot, Zeiteinheiten
 - *weekday(W)* - Wochentag
+
+Hilfspredikate:
 - consecutive(W, L1, L2) - Zwei Zeitslots, die aufeinander folgen
+- not_teached(S, Y) - Ein Fach, welches in einem bestimmten Jahr nicht unterrichtet wird
+- teacherHours(T, H) - Anzahl Stunden eines Lehrers
 
 
 

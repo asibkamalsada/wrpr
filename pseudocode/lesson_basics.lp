@@ -12,15 +12,18 @@ consecutive(W, L1, L2) :- slot(W, L1, _), slot(W, L2, _), L2=L1+1.
 
 
 % Jede Ressource (Lehrer, Klasse, Raum) kann in einem Zeitraum nur einmal genutzt werden...
-% TODO implement
+% TODO Das viele count und != ist wohl kaum gut für die Performance... Aber so hier funktioniert es erst einmal
+:- #count{ Y, C, S, R : lesson(W, L, T, Y, C, S, R) }>1, teacher(T).
+:- #count{ T, S, R : lesson(W, L, T, Y, C, S, R) }>1, class(Y, C).
+:- #count{ T, Y, C, S : lesson(W, L, T, Y, C, S, R) }>1, room(R).
 
 
 % Es muss so viele Stunden für einen Kurs geben, wie für die jeweilige Klassenstufe in diesem Fach festgelegt
-% TODO test
-:- X1 = #count{ (W, L): lesson(W, L1, T, Y, C, S, _) }, slot(W, L1, 1), course(T, Y, C, S), X2 = #count{ (W, L): lesson(W, L2, T, Y, C, S, _) }, slot(W, L2, 2), subjectTimes(S, Y, XT), (X1+(X2*2))!=XT.
+:- course(T, Y, C, S), courseHours(T, Y, C, S, H1), H2=#sum{ X, W, L, R : lesson(W, L, T, Y, C, S, R), slot(W, L, X) }, H1!=H2.
 
-% Stunden bestimmter Fächer dürfen nur in bestimmten Räumen stattfinden
-:- lesson(M, _, R), course(M, _, _, S1), specialRoom(R, S2), S1!=S2.
+
+% Ein Fach, für welches es Spezialräume gibt, muss in einem solchen stattfinden
+:- lesson(_, _, _, _, _, S, R1), specialRoom(R2, S), not specialRoom(R1, S).
 
 
 % Jede Klasse hat min. eine Stunde mit ihrem Lehrer in ihrem Klassenraum
@@ -34,7 +37,9 @@ freeday(T, W) :- teacher(T), weekday(W), not lesson(W, _, T, _, _, _, _).
 % Ein Lehrer hat maximal zwei Stunden hintereinander
 :- consecutive(W, L1, L2), consecutive(W, L2, L3), lesson(W, L1, T, _, _, _, _), lesson(W, L2, T, _, _, _, _), lesson(W, L3, T, _, _, _, _).
 
-% Ein Lehrer hat max. zwei Freistunden hintereinander
+% Ein Lehrer hat max. zwei Freistunden hintereinander (an einem Tag, den er nicht komplett frei hat)
 :- consecutive(W, L1, L2), consecutive(W, L1, L2), not lesson(W, L1, T, _, _, _, _), not lesson(W, L2, T, _, _, _, _), lesson(W, _, T, _, _, _, _).
 
 
+
+#show lesson/7.
