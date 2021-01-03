@@ -1,105 +1,84 @@
-teacher(a).
-teacher(b).
-teacher(c).
-teacher(d).
-teacher(e).
-teacher(f).
-teacher(g).
-teacher(h).
-teacher(i).
-teacher(j).
-teacher(k).
-teacher(l).
-teacher(m).
-teacher(n).
-teacher(o).
-teacher(p).
-teacher(q).
-teacher(r).
-teacher(s).
-teacher(t).
-teacher(u).
-
-maxHourse(X,30) :- teacher(X).
-
-classTeacher(g,5,a).
-classTeacher(r,5,b). 
-classTeacher(o,6,a). 
-classTeacher(c,6,b). 
-classTeacher(a,7,a). 
-classTeacher(k,7,b). 
-classTeacher(b,8,a). 
-classTeacher(d,8,b). 
-classTeacher(u,9,a). 
-classTeacher(t,9,b). 
-classTeacher(q,10,a). 
-classTeacher(p,10,b).
-
-
-
-teaches(a,info).
-teaches(a,math).
-teaches(b,bio).
-teaches(b,nawi).
-teaches(c,ge).
-teaches(c,gewi).
-teaches(d,ge).
-teaches(d,grw).
-teaches(e,de).
-teaches(e,mu).
-teaches(f,de).
-teaches(f,ku).
-teaches(g,geo).
-teaches(g,eth).
-teaches(h,reli).
-teaches(h,spo).
-teaches(i,reli).
-teaches(i,ku).
-teaches(j,math).
-teaches(j,chem).
-teaches(k,math).
-teaches(k,chem).
-teaches(l,deu).
-teaches(l,grw).
-teaches(m,eng).
-teaches(m,mu).
-teaches(n,math).
-teaches(n,geo).
-teaches(o,spo).
-teaches(o,fremd).
-teaches(p,eng).
-teaches(p,fremd).
-teaches(q,deu).
-teaches(q,fremd).
-teaches(r,deu).
-teaches(r,eng).
-teaches(s,eng).
-teaches(s,spo).
-teaches(t,techom).
-teaches(t,eng).
-teaches(u,bio).
-teaches(u,phy).
-
+teacher(a;b;c;d;e;f;g;h;i;j;k;l;m;n;o;p;q;r;s;t;u).
+teaches(
+    a,info;
+    a,math;
+    b,bio;
+    b,nawi;
+    c,ge;
+    c,gewi;
+    d,ge;
+    d,grw;
+    e,de;
+    e,mu;
+    f,de;
+    f,ku;
+    g,geo;
+    g,eth;
+    h,reli;
+    h,spo;
+    i,reli;
+    i,ku;
+    j,math;
+    j,chem;
+    k,math;
+    k,chem;
+    l,deu;
+    l,grw;
+    m,eng;
+    m,mu;
+    n,math;
+    n,geo;
+    o,spo;
+    o,fremd;
+    p,eng;
+    p,fremd;
+    q,deu;
+    q,fremd;
+    r,deu;
+    r,eng;
+    s,eng;
+    s,spo;
+    t,te;
+    t,eng;
+    u,bio;
+    u,phy
+).
 subject(X) :- teaches(_,X).
-
-class(5,a).
-class(5,b).
-class(6,a).
-class(6,b).
-class(7,a).
-class(7,b).
-class(8,a).
-class(8,b).
-class(9,a).
-class(9,b).
-class(10,a).
-class(10,b).
-
+class(
+    5..10,a;
+    5..10,b
+).
+%classes per week (for class 5 only at the moment)
+classperweek(
+    5,de,5;
+    5,info,0;
+    5,eng,5;
+    5,fremd,0;
+    5,math,4;
+    5,bio,2;
+    5,chem,0;
+    5,phy,0;
+    5,ge,1;
+    5,grw,0;
+    5,geo,2;
+    5,spo,3;
+    5,eth,2;
+    5,ku,2;
+    5,mu,2;
+    5,tec,0;
+    5,nawi,0;
+    5,gewi,0;
+).
 room(1..21).
+%for monday to friday
+weekday(1..5).
+
+%for lesson 1 to 9 
+slot(1..9).
 
 physRoom(9).
 chemRoom(8).
-bioRoo(7).
+bioRoom(7).
 pcRoom(5..6).
 musicRoom(4).
 artRoom(3).
@@ -107,15 +86,43 @@ gym(1..2).
 
 standardRoom(10..21).
 
-weekday(1..5).
+maxHourse(X,30) :- teacher(X).
 
-slot(1..9).
+% For each teacher and each timeslot, pick at most one subject which they'll teach and a class and room for them.
+{timetable(W,S,T,A,B,J,R):class(A,B),room(R),teaches(T,J)} <= 1 :- weekday(W);slot(S);teacher(T);class(A,B).
 
-1{timetable(C,D,E,A,B,G,F):teacher(E), room(F), subject(G)}1 :- class(A,B), weekday(C), slot(D).
+% Cardinality constraint enforcing that no room is occupied more than once in the same timeslot on the timetable.
+:- #count{uses(T,A,B,J):timetable(W,S,T,A,B,J,R)} > 1; weekday(W); slot(S); room(R).
 
-:- timetable(W,S,T,C,N,J,R), teacher(T), subject(J), not teaches(T,J). 
+% Cardinaltiy constraint enforcing that no class has two subject at the same time
+:- #count{timp(A,B,W,S,R): timetable(W,S,T,A,B,J,R)} != 1, class(A,B), slot(S), weekday(W).
 
+%*
+maximum(C,N,S,X) :- X = #count{temp(A,B): timetable(A,B,Y,C,N,S,Z)}, class(C,N), subject(S).
+:- maximum(C,N,S,X), classperweek(C,S,Y), X!=Y.
+*%
 
+%ob das geht weiß ich noch nicht, sollte aber lul (constaint that classes per week is right
+:- #count{temp(A,B): timetable(A,B,Y,C,N,S,Z)} != X, class(C,N), subject(S), classperweek(C,S,X).
+
+:- timetable(W,S,T,C,N,J,R), subject(J), J=phy, room(R), not physRoom(R). 
+:- timetable(W,S,T,C,N,J,R), subject(J), J=chem, room(R), not chemRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), J=bio, room(R), not bioRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), J=info, room(R), not pcRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), J=mu, room(R), not musicRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), J=ku, room(R), not artRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), J=spo, room(R), not gym(R).
+
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=phy, room(R), physRoom(R). 
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=chem, room(R), chemRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=bio, room(R), bioRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=info, room(R), pcRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=mu, room(R), musicRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=ku, room(R), artRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=spo, room(R), gym(R).
+
+%teacherCount(T,X) :- X = #count{xmp(A,B): timetable(A,B,T,C,N,S,Z)}, teacher(T).
+%:- teacherCount(T,X), maxHourse(T,Y), X>Y.
 
 #show timetable/7.
 
