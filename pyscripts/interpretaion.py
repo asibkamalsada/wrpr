@@ -20,14 +20,16 @@ arg_names: List[str] = [
 
 
 class Interpreter:
-    @staticmethod
-    def interpret(model):
-        symbols = model.symbols(shown=True)
-        teachers = Interpreter.group_teachers(symbols)
-        classes = Interpreter.group_classes(symbols)
-        rooms = Interpreter.group_rooms(symbols)
+    def __init__(self, model):
+        self.symbols = model.symbols(shown=True)
 
-        return teachers, classes, rooms
+        self.teachers = Interpreter.group_teachers(self.symbols)
+        self.classes = Interpreter.group_classes(self.symbols)
+        self.rooms = Interpreter.group_rooms(self.symbols)
+
+        self.teachers_csv = Interpreter.interpret_group(self.teachers)
+        self.classes_csv = Interpreter.interpret_group(self.classes)
+        self.rooms_csv = Interpreter.interpret_group(self.rooms)
 
     @staticmethod
     def group_teachers(terms):
@@ -66,18 +68,39 @@ class Interpreter:
         return rooms
 
     @staticmethod
-    def interpret_teachers(teachers):
-        teachers_csv = {}
-        for teacher, rules in teachers.items():
+    def interpret_group(group):
+        _csv = {}
+        for grouped, rules in group.items():
             timetable_csv = [{}, {}, {}, {}, {}, {}, {}, {}, {}]
             for term in rules:
                 t = term.arguments
                 row_n = int(str(t[1])) - 1
-                old_str = timetable_csv[row_n].get(t[0], "")
-                timetable_csv[row_n][t[0]] = old_str + ';' + str(term)
-            teachers_csv[teacher] = timetable_csv
+                if t[0] not in timetable_csv[row_n]:
+                    new_str = str(term)
+                else:
+                    new_str = timetable_csv[row_n][t[0]] + ' ' + str(term)
+                timetable_csv[row_n][t[0]] = new_str
+            _csv[grouped] = timetable_csv
 
-        return teachers_csv
+        return _csv
+
+    def write_full(self):
+        self.write_teachers()
+        self.write_classes()
+        self.write_rooms()
+
+    def write_teachers(self):
+        for teacher, content in self.teachers_csv.items():
+            CSVWriter.write(os.path.join(current_dir, 'teachers'), 'teacher_' + str(teacher) + '.csv', content)
+
+    def write_classes(self):
+        for (grade, class_), content in self.classes_csv.items():
+            CSVWriter.write(
+                os.path.join(current_dir, 'classes'), 'class_' + str(grade) + '_' + str(class_) + '.csv', content)
+
+    def write_rooms(self):
+        for room, content in self.rooms_csv.items():
+            CSVWriter.write(os.path.join(current_dir, 'rooms'), 'room_' + str(room) + '.csv', content)
 
 
 class CSVWriter:
@@ -104,12 +127,8 @@ def main():
     with ctl.solve(yield_=True) as handle:
         for model in handle:
             # print(model)
-            teachers, classes, rooms = Interpreter.interpret(model)
-            teachers_csv = Interpreter.interpret_teachers(teachers)
-
-            for teacher, content in teachers_csv.items():
-                CSVWriter.write(os.path.join(current_dir, 'teachers'), 'teacher_' + str(teacher) + '.csv', content)
-
+            interpreter = Interpreter(model)
+            interpreter.write_full()
             break
 
 
