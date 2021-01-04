@@ -4,8 +4,15 @@ import clingo
 import sys
 
 
-def on_model(model):
-    print("Answer: {}".format(model))
+class Answers:
+    models = []
+
+    def on_model(self, model):
+        self.models.append(model)
+        print("Answer: {}".format(model))
+
+    def get(self):
+        return self.models
 
 
 class Context:
@@ -23,7 +30,9 @@ def main():
     ctl.configuration.solve.models = sys.argv[2]
     # standard grounding
     ctl.ground([('base', [])])
-    ctl.solve(on_model=on_model)
+
+    answers = Answers()
+    ctl.solve(on_model=answers.on_model)
 
 
 if __name__ == '__main__':
