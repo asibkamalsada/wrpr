@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
+import os
 from typing import List
 
 import clingo
 import sys
+import csv
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 arg_names: List[str] = [
     'weekday',
@@ -16,7 +20,6 @@ arg_names: List[str] = [
 
 
 class Interpreter:
-
     @staticmethod
     def interpret(model):
         symbols = model.symbols(shown=True)
@@ -29,38 +32,65 @@ class Interpreter:
     @staticmethod
     def group_teachers(terms):
         teachers = {}
-
         for term in terms:
             if term.match('timetable', 7):
-                if term.arguments[2] not in teachers:
-                    teachers[term.arguments[2]] = []
-                teachers[term.arguments[2]].append(term)
+                teacher = term.arguments[2]
+                if teacher not in teachers:
+                    teachers[teacher] = set()
+                teachers[teacher].add(term)
 
         return teachers
 
     @staticmethod
     def group_classes(terms):
         classes = {}
-
         for term in terms:
             if term.match('timetable', 7):
-                if (term.arguments[3], term.arguments[4]) not in classes:
-                    classes[(term.arguments[3], term.arguments[4])] = []
-                classes[(term.arguments[3], term.arguments[4])].append(term)
+                class_ = (term.arguments[3], term.arguments[4])
+                if class_ not in classes:
+                    classes[class_] = set()
+                classes[class_].add(term)
 
         return classes
 
     @staticmethod
     def group_rooms(terms):
         rooms = {}
-
         for term in terms:
             if term.match('timetable', 7):
-                if term.arguments[6] not in rooms:
-                    rooms[term.arguments[6]] = []
-                rooms[term.arguments[6]].append(term)
+                room = term.arguments[6]
+                if room not in rooms:
+                    rooms[room] = set()
+                rooms[room].add(term)
 
         return rooms
+
+    @staticmethod
+    def interpret_teachers(teachers):
+        teachers_csv = {}
+        for teacher, rules in teachers.items():
+            timetable_csv = [{}, {}, {}, {}, {}, {}, {}, {}, {}]
+            for term in rules:
+                t = term.arguments
+                row_n = int(str(t[1])) - 1
+                old_str = timetable_csv[row_n].get(t[0], "")
+                timetable_csv[row_n][t[0]] = old_str + ';' + str(term)
+            teachers_csv[teacher] = timetable_csv
+
+        return teachers_csv
+
+
+class CSVWriter:
+    @staticmethod
+    def write(path, file_name, content):
+        os.makedirs(path, exist_ok=True)
+        with open(os.path.join(path, file_name), 'w', newline='') as csv_file:
+            writer = csv.DictWriter(csv_file, delimiter=';', fieldnames=[
+                clingo.Number(1), clingo.Number(2), clingo.Number(3), clingo.Number(4), clingo.Number(5)
+            ])
+
+            writer.writeheader()
+            writer.writerows(content)
 
 
 def main():
@@ -71,14 +101,16 @@ def main():
     # standard grounding
     ctl.ground([('base', [])])
 
-    handle = ctl.solve(yield_=True)
+    with ctl.solve(yield_=True) as handle:
+        for model in handle:
+            # print(model)
+            teachers, classes, rooms = Interpreter.interpret(model)
+            teachers_csv = Interpreter.interpret_teachers(teachers)
 
-    for model in handle:
-        #print(model)
-        teachers, classes, rooms = Interpreter.interpret(model)
-        print(teachers)
-        print(classes)
-        print(rooms)
+            for teacher, content in teachers_csv.items():
+                CSVWriter.write(os.path.join(current_dir, 'teachers'), 'teacher_' + str(teacher) + '.csv', content)
+
+            break
 
 
 if __name__ == '__main__':
