@@ -14,6 +14,23 @@ class Answers:
     def get(self):
         return self.models
 
+    def interpret(self, model):
+        symbols = model.symbols(terms=True)
+        teachers = self.interpret_teachers(symbols)
+        classes = self.interpret_classes(symbols)
+        rooms = self.interpret_rooms(symbols)
+
+        return teachers, classes, rooms
+
+    def interpret_teachers(self, symbols):
+        pass
+
+    def interpret_classes(self, symbols):
+        pass
+
+    def interpret_rooms(self, symbols):
+        pass
+
 
 class Context:
     def id(self, x):
