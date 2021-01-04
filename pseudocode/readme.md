@@ -107,16 +107,20 @@ Für Optimierungen und Erweiterungen:
 
 Regeln, die nach Möglichkeit bei Erstellung des Stundenplans berücksichtigt werden sollten:
 
-- So viel wie möglich als Blockstunden (Slots mit 2 Zeiteinheiten)
-- Keine Freistunden für Klassen (zwischendrin)
-- Fächer einer Fächergruppe sollten in möglichst großen Abständen zueinander unterrichet werden
-  - Möglichst niemals hintereinander (Sprachen)? (Problem wenn "Kernfächer" eine Fächergruppe sind)
-- Eine Klasse hat möglichst viele Stunden mit ihrem Klassenlehrer
-- Eine Klasse hat möglichst viele Stunden in ihrem Klassenraum
-- Möglichst gleichmäßige Anzahl Stunden pro Tag (für Klassen)
-- Lehrer eines Faches sollten nicht vollkommen unterschiedliche Auslastungen für das jeweilige Fach haben
-  - Sonst könnte es passieren, dass ein Lehrer nur ein Fach unterrichtet
-  - Würde obsolet, wenn die Zuweisung Kurse zu Lehrer manuell erfolgt
+1) Blockstunden
+  - Einführung Blockstunden als 2 Stunden zusammen (oder ein Slot mit 2 Einheiten, je nachdem was besser performt)
+  - Blockstunden gibt es nur zu bestimmten Zeiten
+  - Es soll so viel wie möglich als Block unterrichtet werden
+2) Es sollte mehr Stunden früh als Nachmittags geben (sowohl für Lehrer als auch für Klassen)
+3) Ein Fach nicht zweimal am selben Tag (außer Blockstunden)
+4) Keine Freistunden für Klassen
+5) Fächer einer Fächergruppe (Musik&Kunst, Sprachen, ...) sollten in möglichst großen Abständen unterrichtet werden
+  - Niemals direkt aufeinanderfolgend wegen Sprachen
+6) Eine Klasse hat möglichst viele Stunden mit ihrem Klassenlehrer
+7) Eine Klasse hat möglichst viele Stunden in einem Klassenraum
+8) Möglichst gleichmäßige Anzahl Stunden pro Tag für Klassen
+9) Ein Fach sollte in etwa gleichem Maße von den verschiedenen Lehrern unterrichtet werden
+
 
 ## Zweiteilung
 
