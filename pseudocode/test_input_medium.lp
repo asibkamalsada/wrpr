@@ -141,53 +141,79 @@ teacher(l).
 teacher(m).
 teacher(n).
 teacher(o).
+teacher(p).
+teacher(q).
+teacher(r).
+teacher(s).
+teacher(t).
+teacher(u).
 
 maxHours(T, 20) :- teacher(T).
 
 classTeacher(a,5,a).
-classTeacher(c,6,a).
-classTeacher(e,7,a).
-classTeacher(g,8,a).
-classTeacher(i,9,a).
-classTeacher(k,10,a).
+classTeacher(b,5,b). 
+classTeacher(c,6,a). 
+classTeacher(d,6,b). 
+classTeacher(e,7,a). 
+classTeacher(f,7,b). 
+classTeacher(g,8,a). 
+classTeacher(h,8,b). 
+classTeacher(i,9,a). 
+classTeacher(j,9,b). 
+classTeacher(k,10,a). 
+classTeacher(l,10,b).
 
-teaches(a,profil).
+teaches(a,inf).
 teaches(a,ma).
 teaches(b,bio).
-teaches(b,ma).
+teaches(b,profil).
 teaches(c,ge).
 teaches(c,profil).
-teaches(d,en).
+teaches(d,ge).
 teaches(d,grw).
 teaches(e,de).
 teaches(e,mu).
 teaches(f,de).
 teaches(f,ku).
-teaches(g,en).
+teaches(g,geo).
 teaches(g,ethikreligion).
 teaches(h,ethikreligion).
 teaches(h,spo).
 teaches(i,ethikreligion).
-teaches(i,de).
+teaches(i,ku).
 teaches(j,ma).
 teaches(j,ch).
 teaches(k,ma).
-teaches(k,geo).
+teaches(k,ch).
 teaches(l,de).
-teaches(l,en).
-teaches(m,spo).
-teaches(m,fremd).
-teaches(n,en).
-teaches(n,fremd).
-teaches(o,tuc).
-teaches(o,info).
-
+teaches(l,grw).
+teaches(m,en).
+teaches(m,mu).
+teaches(n,ma).
+teaches(n,geo).
+teaches(o,spo).
+teaches(o,fremd).
+teaches(p,en).
+teaches(p,fremd).
+teaches(q,de).
+teaches(q,fremd).
+teaches(r,de).
+teaches(r,en).
+teaches(s,en).
+teaches(s,spo).
+teaches(t,tuc).
+teaches(t,en).
+teaches(u,bio).
+teaches(u,ph).
 
 room(1). specialRoom(1, spo).
+room(2). specialRoom(2, spo).
 room(10). specialRoom(10, inf).
 room(11). specialRoom(11, tuc).
 room(12).
 room(13).
+room(14).
+room(15).
 room(20). specialRoom(20, ch).
 room(21). specialRoom(21, ph).
 room(22). specialRoom(22, bio).
@@ -195,10 +221,12 @@ room(30).
 room(31).
 room(32).
 room(33).
+room(34).
 room(40). specialRoom(40, ku).
 room(41). specialRoom(41, mu).
 room(42).
 room(43).
+room(44).
 
 
 weekday(mo). weekday(di). weekday(mi). weekday(do). weekday(fr).
@@ -208,5 +236,3 @@ slot(di, 1, 2). slot(di, 2, 1). slot(di, 3, 2). slot(di, 4, 1). slot(di, 5, 1). 
 slot(mi, 1, 2). slot(mi, 2, 1). slot(mi, 3, 2). slot(mi, 4, 1). slot(mi, 5, 1).
 slot(do, 1, 2). slot(do, 2, 1). slot(do, 3, 2). slot(do, 4, 1). slot(do, 5, 1). slot(do, 6, 2).
 slot(fr, 1, 2). slot(fr, 2, 1). slot(fr, 3, 2). slot(fr, 4, 1). slot(fr, 5, 1).
-
-

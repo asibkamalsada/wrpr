@@ -2,7 +2,7 @@
 % Optimierung der Zeitplanung
 %----------------------------------------------------------
 
-% Möglichst wenig Freistunden für Klassen
+% Keine Freistunden für Klassen
 % TODO
 
 % Fächer einer Fächergruppe sollten in möglichst großen Abständen zueinander unterrichet werden

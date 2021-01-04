@@ -2,25 +2,21 @@
 % Basis für die Zeitplanung (Was findet wann wo statt)
 %----------------------------------------------------------
 
-
-% Slots können aufeinander folgen
-consecutive(W, L1, L2) :- slot(W, L1, _), slot(W, L2, _), L2=L1+1.
-
-
 % Eine Stunde eines Kurses findet zu einer bestimmten Zeit in einem bestimmten Raum statt
 1{ lesson(W, L, T, Y, C, S, R) : slot(W, L, _), room(R) } :- course(T, Y, C, S).
 
 
 % Jede Ressource (Lehrer, Klasse, Raum) kann in einem Zeitraum nur einmal genutzt werden...
-:- lesson(W, L, T, Y1, C1, S1, R1), lesson(W, L, T, Y2, C2, S2, R2), (Y1, C1, S1, R1)!=(Y2, C2, S2, R2).
-:- lesson(W, L, T1, Y, C, S1, R1), lesson(W, L, T2, Y, C, S2, R2), (T1, S1, R1)!=(T2, S2, R2).
-:- lesson(W, L, T1, Y1, C1, S1, R), lesson(W, L, T2, Y2, C2, S2, R), (T1, Y1, C1, S1)!=(T2, Y2, C2, S2).
+% Teacher
+:- #count{ Y, C, S, R : lesson(W, L, T, Y, C, S, R) }>1, slot(W, L, _), teacher(T).
+% Class
+:- #count{ T, S, R : lesson(W, L, T, Y, C, S, R) }>1, slot(W, L, _), class(Y, C).
+% Room
+:- #count{ T, Y, C, S : lesson(W, L, T, Y, C, S, R) }>1, slot(W, L, _), room(R).
 
 
 % Ein Kurs muss so viele Stunden haben wie geplant
-%actualHours(T, Y, C, S, H) :- H=#sum{ X, W, L, R : lesson(W, L, T, Y, C, S, R), slot(W, L, X) }, course(T, Y, C, S).
-:- courseHours(T, Y, C, S, H1), H2=#sum{ X, W, L, R : lesson(W, L, T, Y, C, S, R), slot(W, L, X) }, H1!=H2.
-
+:- #sum{ X, W, L : lesson(W, L, T, Y, C, S, R), slot(W, L, X) } != H, courseHours(T, Y, C, S, H).
 
 
 % Ein Fach, für welches es Spezialräume gibt, muss in einem solchen stattfinden
@@ -34,10 +30,10 @@ freeday(T, W) :- teacher(T), weekday(W), not lesson(W, _, T, _, _, _, _).
 :- teacher(T), not freeday(T, _).
 
 % Ein Lehrer hat maximal zwei Stunden hintereinander
-:- consecutive(W, L1, L2), consecutive(W, L2, L3), lesson(W, L1, T, _, _, _, _), lesson(W, L2, T, _, _, _, _), lesson(W, L3, T, _, _, _, _).
+:- lesson(W, L, T, _, _, _, _), lesson(W, L+1, T, _, _, _, _), lesson(W, L+2, T, _, _, _, _).
 
 % Ein Lehrer hat max. zwei Freistunden hintereinander (an einem Tag, den er nicht komplett frei hat)
-:- consecutive(W, L1, L2), consecutive(W, L1, L2), not lesson(W, L1, T, _, _, _, _), not lesson(W, L2, T, _, _, _, _), lesson(W, _, T, _, _, _, _).
+:- slot(W, L, _), slot(W, L+1, _), not lesson(W, L, T, _, _, _, _), not lesson(W, L+1, T, _, _, _, _), lesson(W, _, T, _, _, _, _).
 
 
 #show lesson/7.
