@@ -2,6 +2,7 @@
 import os
 from typing import List
 
+import shutil
 import clingo
 import sys
 import csv
@@ -22,6 +23,8 @@ arg_names: List[str] = [
 class Interpreter:
     def __init__(self, model):
         self.symbols = model.symbols(shown=True)
+
+        self.model_n = model.number
 
         self.teachers = Interpreter.group_teachers(self.symbols)
         self.classes = Interpreter.group_classes(self.symbols)
@@ -91,16 +94,21 @@ class Interpreter:
 
     def write_teachers(self):
         for teacher, content in self.teachers_csv.items():
-            CSVWriter.write(os.path.join(current_dir, 'teachers'), 'teacher_' + str(teacher) + '.csv', content)
+            CSVWriter.write(os.path.join(current_dir, 'csv', str(self.model_n), 'teachers'),
+                            'teacher_' + str(teacher) + '.csv',
+                            content)
 
     def write_classes(self):
         for (grade, class_), content in self.classes_csv.items():
-            CSVWriter.write(
-                os.path.join(current_dir, 'classes'), 'class_' + str(grade) + '_' + str(class_) + '.csv', content)
+            CSVWriter.write(os.path.join(current_dir, 'csv', str(self.model_n), 'classes'),
+                            'class_' + str(grade) + '_' + str(class_) + '.csv',
+                            content)
 
     def write_rooms(self):
         for room, content in self.rooms_csv.items():
-            CSVWriter.write(os.path.join(current_dir, 'rooms'), 'room_' + str(room) + '.csv', content)
+            CSVWriter.write(os.path.join(current_dir, 'csv', str(self.model_n), 'rooms'),
+                            'room_' + str(room) + '.csv',
+                            content)
 
 
 class CSVWriter:
@@ -116,6 +124,12 @@ class CSVWriter:
             writer.writerows(content)
 
 
+def clean_csvs():
+    work_dir = os.path.join(current_dir, 'csv')
+    if os.path.exists(work_dir) and os.path.isdir(work_dir):
+        shutil.rmtree(work_dir)
+
+
 def main():
     ctl = clingo.Control()
     # read asp program file
@@ -125,11 +139,11 @@ def main():
     ctl.ground([('base', [])])
 
     with ctl.solve(yield_=True) as handle:
+        clean_csvs()
         for model in handle:
             # print(model)
             interpreter = Interpreter(model)
             interpreter.write_full()
-            break
 
 
 if __name__ == '__main__':
