@@ -250,7 +250,7 @@ connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_
 %:- #count{lel(S):timetable(W,S,_,C,N,_,_)} > 4, class(C,N), weekday(W). 
 
 
-%#show timetable/7.
-#show connectedTeacher/5.
+#show timetable/7.
+%#show connectedTeacher/5.
 %#show subject/1.
 

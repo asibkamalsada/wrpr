@@ -4,6 +4,10 @@ import clingo
 import sys
 
 
+def on_model(model):
+    print("Answer: {}".format(model))
+
+
 class Context:
     def id(self, x):
         return x
@@ -16,14 +20,10 @@ def main():
     ctl = clingo.Control()
     # read asp program file
     ctl.load(sys.argv[1])
-    ctl.configuration.solve.models='0'
+    ctl.configuration.solve.models = sys.argv[2]
     # standard grounding
     ctl.ground([('base', [])])
-    with ctl.solve(yield_=True) as handle:
-        for m in handle:
-            print("Answer: {}".format(m))
-        # gives a SolveResult
-        result = handle.get()
+    ctl.solve(on_model=on_model)
 
 
 if __name__ == '__main__':
