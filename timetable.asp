@@ -222,19 +222,35 @@ freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=ku, room(R), artRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=spo, room(R), gym(R).
 
-%Constraint for no empty slots
+%Constraint for no empty slots in the middle 
 
 connected(A,B,W,S,W,S) :- timetable(W,S,_,A,B,_,_).
 connected(A,B,W,S,W,Y) :- timetable(W,S,_,A,B,_,_), timetable(W,V,_,A,B,_,_), connected(A,B,W,S,W,V),  timetable(W,Y,_,A,B,_,_), |Y - V| == 1.
 :- timetable(W,S,_,A,B,_,_), timetable(W,V,_,A,B,_,_), not connected(A,B,W,S,W,V).
 
 %teacherCount(T,X) :- X = #count{xmp(A,B): timetable(A,B,T,C,N,S,Z)}, teacher(T).
-%:- teacherCount(T,X), maxHourse(T,Y), X>Y.
+:- #count{xmp(A,B): timetable(A,B,T,C,N,S,Z)} > Y, teacher(T), maxHourse(T,Y).
+
+%profil und ethik für klassenstufe zur gleichen zeit 
+
+% Ein Lehrer hat maximal zwei Stunden hintereinander
+
+connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
+connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), |Y - V| == 1.
+
+:- connectedTeacher(T,W,S,W,Y), |S - Y| > 2.
+
+%maximal 2 freistunden
+
+:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>2.
 
 
 
+%mind 5 Stunden pro Tag (macht es aber mega langsam)
+%:- #count{lel(S):timetable(W,S,_,C,N,_,_)} > 4, class(C,N), weekday(W). 
 
-#show timetable/7.
-%#show connected/6.
+
+%#show timetable/7.
+#show connectedTeacher/5.
 %#show subject/1.
 
