@@ -131,10 +131,15 @@ def clean_csvs():
 
 
 def main():
+    arg_n = len(sys.argv)
+    if arg_n < 3:
+        raise TooFewArgumentsException()
+
     ctl = clingo.Control()
     # read asp program file
-    ctl.load(sys.argv[1])
-    ctl.configuration.solve.models = sys.argv[2]
+    for n in range(1, arg_n - 1):
+        ctl.load(sys.argv[n])
+    ctl.configuration.solve.models = sys.argv[arg_n - 1]
     # standard grounding
     ctl.ground([('base', [])])
 
@@ -146,5 +151,11 @@ def main():
             interpreter.write_full()
 
 
+class TooFewArgumentsException(Exception):
+    def __init__(self):
+        self.message = 'not enough arguments'
+
+
 if __name__ == '__main__':
     main()
+
