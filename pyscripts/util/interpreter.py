@@ -86,8 +86,7 @@ class Interpreter:
         for (grade, class_), content in self.classes_csv.items():
             csvwriter.write(os.path.join(self.directory, 'csv', str(self.model_n), 'classes'),
                             'class_' + str(grade) + '_' + str(class_) + '.csv',
-                            content,
-                            )
+                            content)
 
     def write_rooms(self):
         for room, content in self.rooms_csv.items():
