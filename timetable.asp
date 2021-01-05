@@ -249,8 +249,15 @@ connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_
 %mind 5 Stunden pro Tag (macht es aber mega langsam)
 %:- #count{lel(S):timetable(W,S,_,C,N,_,_)} > 4, class(C,N), weekday(W). 
 
+firstlesson(C,N,X) :- class(C,N), slot(S), S = 1, X = #count{days(W) : timetable(W,S,_,C,N,_,_)}.
+#maximize {X@10:firstlesson(C,N,X)}.
 
-%#show timetable/7.
-#show connectedTeacher/5.
-%#show subject/1.
+latelesson(C,N,W,X) :- class(C,N), weekday(W), slot(S), S > 6, X = #count{slots(S) : timetable(W,S,_,C,N,_,_)}.
+#minimize {X@5: latelesson(C,N,W,X)}.
+
+
+
+#show timetable/7.
+%#show latelesson/4.
+
 
