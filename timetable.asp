@@ -185,21 +185,19 @@ standardRoom(10..21).
 
 maxHourse(X,30) :- teacher(X).
 
-block(1,2; 4,5; 8,9).
-
 % For each teacher and each timeslot, pick at most one subject which they'll teach and a class and room for them.
-{timetable(W,S,T,A,B,J,R):class(A,B),room(R),teaches(T,J)} <= 1 :- weekday(W);slot(S);teacher(T).
+{timetable(W,S,T,A,B,J,R):class(A,B),room(R),teaches(T,J)} <= 1 :- weekday(W);slot(S);teacher(T);class(A,B).
 
 % Cardinality constraint enforcing that no room is occupied more than once in the same timeslot on the timetable.
 :- #count{uses(T,A,B,J):timetable(W,S,T,A,B,J,R)} > 1; weekday(W); slot(S); room(R).
 
 
 % Cardinaltiy constraint enforcing that no class has two subject at the same time
-:- #count{timp(A,B,W,S,R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S); weekday(W).
+:- #count{timp(A,B,W,S,R): timetable(W,S,T,A,B,J,R)} > 1, class(A,B), slot(S), weekday(W).
+
 
 %ob das geht weiß ich noch nicht, sollte aber lul (constaint that classes per week is right
-:- #count{temp(A,B): timetable(A,B,T,C,N,S,R)} != X; class(C,N); subject(S); subjectTimes(S,C,X).
-
+:- #count{temp(A,B): timetable(A,B,T,C,N,S,R)} != X, class(C,N), subject(S), subjectTimes(S,C,X).
 
 %lehrer immer ein fach
 :- #count{A,B,J,T: timetable(W,S,T,A,B,J,R)} > 1, class(A,B), subject(J).
@@ -230,26 +228,29 @@ connected(A,B,W,S,W,S) :- timetable(W,S,_,A,B,_,_).
 connected(A,B,W,S,W,Y) :- timetable(W,S,_,A,B,_,_), timetable(W,V,_,A,B,_,_), connected(A,B,W,S,W,V),  timetable(W,Y,_,A,B,_,_), |Y - V| == 1.
 :- timetable(W,S,_,A,B,_,_), timetable(W,V,_,A,B,_,_), not connected(A,B,W,S,W,V).
 
-%teacher max hours
+%teacherCount(T,X) :- X = #count{xmp(A,B): timetable(A,B,T,C,N,S,Z)}, teacher(T).
 :- #count{xmp(A,B): timetable(A,B,T,C,N,S,Z)} > Y, teacher(T), maxHourse(T,Y).
 
-%profil und ethik für klassenstufe zur gleichen zeit (maybe todo // hardcoding problems)
+%profil und ethik für klassenstufe zur gleichen zeit 
 
-:-class(C,_), subject(J), J = ethikreligion, #count{slots(W,S):timetable(W,S,_,C,_,J,_)} > 2.
-:-class(C,_), subject(J), J = profil, #count{slots(W,S):timetable(W,S,_,C,_,J,_)} > 2.
-
-% Ein Lehrer hat maximal drei Stunden hintereinander
+% Ein Lehrer hat maximal zwei Stunden hintereinander
 
 connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
 connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), |Y - V| == 1.
 
-%:- connectedTeacher(T,W,S,W,Y), |S - Y| > 2.
+:- connectedTeacher(T,W,S,W,Y), |S - Y| > 2.
 
-%maximal 2 freistunden (macht das Programm sehr langsam, zum testen bitte ausstellen)
+%maximal 2 freistunden
 
-%:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>3.
+:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>2.
+
+
+
+%mind 5 Stunden pro Tag (macht es aber mega langsam)
+%:- #count{lel(S):timetable(W,S,_,C,N,_,_)} > 4, class(C,N), weekday(W). 
+
 
 #show timetable/7.
 %#show connectedTeacher/5.
-
+%#show subject/1.
 
