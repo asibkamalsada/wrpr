@@ -1,5 +1,5 @@
 import os
-from pyscripts.util import csvwriter
+from pyscripts.util import csvhandler
 
 
 class Interpreter:
@@ -78,18 +78,18 @@ class Interpreter:
 
     def write_teachers(self):
         for teacher, content in self.teachers_csv.items():
-            csvwriter.write(os.path.join(self.directory, 'csv', str(self.model_n), 'teachers'),
-                            'teacher_' + str(teacher) + '.csv',
-                            content)
+            csvhandler.write_csv(os.path.join(self.directory, 'csv', str(self.model_n), 'teachers'),
+                                 'teacher_' + str(teacher) + '.csv',
+                                 content)
 
     def write_classes(self):
         for (grade, class_), content in self.classes_csv.items():
-            csvwriter.write(os.path.join(self.directory, 'csv', str(self.model_n), 'classes'),
-                            'class_' + str(grade) + '_' + str(class_) + '.csv',
-                            content)
+            csvhandler.write_csv(os.path.join(self.directory, 'csv', str(self.model_n), 'classes'),
+                                 'class_' + str(grade) + '_' + str(class_) + '.csv',
+                                 content)
 
     def write_rooms(self):
         for room, content in self.rooms_csv.items():
-            csvwriter.write(os.path.join(self.directory, 'csv', str(self.model_n), 'rooms'),
-                            'room_' + str(room) + '.csv',
-                            content)
+            csvhandler.write_csv(os.path.join(self.directory, 'csv', str(self.model_n), 'rooms'),
+                                 'room_' + str(room) + '.csv',
+                                 content)
