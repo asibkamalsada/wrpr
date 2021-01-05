@@ -249,5 +249,14 @@ connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_
 
 %:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>3.
 
+
+firstlesson(C,N,X) :- class(C,N), slot(S), S = 1, X = #count{days(W) : timetable(W,S,_,C,N,_,_)}.
+#maximize {X@10:firstlesson(C,N,X)}.
+
+latelesson(C,N,W,X) :- class(C,N), weekday(W), slot(S), S > 6, X = #count{slots(S) : timetable(W,S,_,C,N,_,_)}.
+#minimize {X@5: latelesson(C,N,W,X)}.
+
+
 #show timetable/7.
 %#show connectedTeacher/5.
+
