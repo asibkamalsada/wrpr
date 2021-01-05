@@ -211,7 +211,7 @@ freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=phy, room(R), not physRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=chem, room(R), not chemRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=bio, room(R), not bioRoom(R).
-:- timetable(W,S,T,C,N,J,R), subject(J), J=info, room(R), not pcRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), J=inf, room(R), not pcRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=mu, room(R), not musicRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=ku, room(R), not artRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=spo, room(R), not gym(R).
@@ -219,7 +219,7 @@ freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=phy, room(R), physRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=chem, room(R), chemRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=bio, room(R), bioRoom(R).
-:- timetable(W,S,T,C,N,J,R), subject(J), not J=info, room(R), pcRoom(R).
+:- timetable(W,S,T,C,N,J,R), subject(J), not J=inf, room(R), pcRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=mu, room(R), musicRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=ku, room(R), artRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=spo, room(R), gym(R).
