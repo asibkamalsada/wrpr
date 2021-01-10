@@ -207,15 +207,15 @@ block(1,2; 4,5; 8,9).
 :- #count{uses(T,A,B,J):timetable(W,S,T,A,B,J,R)} > 1; weekday(W); slot(S); room(R).
 
 
-% Cardinaltiy constraint enforcing that no class has two subject at the same time
-:- #count{timp(A,B,W,S,R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S); weekday(W).
+% Cardinaltiy constraint enforcing that no class has two subjects at the same time
+:- #count{timp(R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S); weekday(W).
 
 %ob das geht weiß ich noch nicht, sollte aber lul (constaint that classes per week is right
 :- #count{temp(A,B): timetable(A,B,T,C,N,S,R)} != X; class(C,N); subject(S); subjectTimes(S,C,X).
 
 
 %lehrer immer ein fach
-:- #count{A,B,J,T: timetable(W,S,T,A,B,J,R)} > 1, class(A,B), subject(J).
+:- #count{T: timetable(W,S,T,A,B,J,R)} > 1, class(A,B), subject(J).
 
 %lehrer freien Tag
 freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
@@ -262,6 +262,7 @@ connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_
 
 %:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>3.
 
+%*
 
 firstlesson(C,N,X) :- class(C,N), slot(S), S = 1, X = #count{days(W) : timetable(W,S,_,C,N,_,_)}.
 #maximize {X@10:firstlesson(C,N,X)}.
@@ -281,6 +282,7 @@ blocklesson(X,Y,W,C,N,0):-block(X,Y), weekday(W), class(C,N), subject(J), subjec
 classTeacherLessons(C, N, X) :- classTeacher(T, C, N), X = #count{ (W, S) : timetable(W, S, T, C, N, _, _) }.
 #maximize { X@10 : classTeacherLessons(_, _, X) }.
 
+
 % Klassenraum könnte man analog regeln - insofern das im Input wäre...
 
 
@@ -289,11 +291,13 @@ classLessonsAverage(C, N, X) :- class(C, N), X1 = #count{ (W, S): timetable(W, S
 classLessons(W, C, N, X) :- class(C, N), weekday(W), X = #count{ S: timetable(W, S, _, _, C, N, _, _) }.
 #minimize { X@4 : classLessons(_, W, C, X1), classLessonsAverage(W, C, N, X2), X=|X1-X2| }.
 
+
 % Möglichst gleichmäßige Anzahl Stunden je Fach und Lehrer
 subjectLessonsAverage(T, X) :- teacher(T), X1 = #count{ (W, S): timetable(W, S, T, _, _, _, _) }, X=X1/2.
 teacherSubjectLessons(T, J, X) :- teacher(T), subject(J), X = #count{ (W, S): timetable(W, S, T, _, _, J, _) }.
 #minimize { X@4 : teacherSubjectLessons(T, J, X1), subjectLessonsAverage(J, X2), X=|X1-X2| }.
 
+*%
 
 
 #show timetable/7.
