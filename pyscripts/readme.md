@@ -1,11 +1,25 @@
 # pyscripts
 
+## `interpretation.py`
+
 use the `interpretation.py` script as follows:
 
-`python interpretation.py /path/to/first/file.asp ... /path/to/last/file/lastfile.lp number-of-models`
+`python interpretation.py [space seperated asp files] number-of-models`
+
+e.g. `python interpretation.py test.asp test2.lp 3`
 
 to let clingo solve for as much as `number-of-models` stable models using the given files.
 
 `number-of-models` cannot be omitted.
 
-It is going to create/overwrite the content inside a `csv` folder in the same directory as the script.
+It is going to create/overwrite the content inside a `csv` folder in the same directory as the script.  
+It will contain one numerated folder for each solution which is split into timetables for each class, teacher and room.
+
+## `util/csvhandler.py`
+
+use the `util/csvhandler.py` script as follows:
+
+`python csvhandler.py folder/containing/csvs`
+
+where the given folder has to contain the same `csv` files as in `bsp1` with the same formatting.  
+It will print the corresponding `asp` atoms, rules, etc to the command line.

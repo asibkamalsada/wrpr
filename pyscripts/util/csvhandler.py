@@ -1,6 +1,7 @@
 import csv
 import os
 import re
+import sys
 
 from clingo import Number
 
@@ -94,7 +95,7 @@ def fn(fun, *args):
 
 
 def main():
-    lines = csv2asp('C:\\Users\\Kamalsada\\Documents\\Asib\\repos\\wrpr\\bsp1\\')
+    lines = csv2asp(sys.argv[1])
 
     for line in lines:
         print(line)
