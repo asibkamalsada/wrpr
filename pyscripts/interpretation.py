@@ -13,8 +13,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 arg_names: List[str] = ['weekday', 'slot', 'teacher', 'grade', 'class', 'subject', 'room']
 
 
-def clean_csvs(directory):
-    work_dir = os.path.join(directory, 'csv')
+def clean_solutions(directory):
+    work_dir = os.path.join(directory, 'solutions')
     if os.path.exists(work_dir) and os.path.isdir(work_dir):
         shutil.rmtree(work_dir)
 
@@ -33,7 +33,7 @@ def main():
     ctl.ground([('base', [])])
 
     with ctl.solve(yield_=True) as handle:
-        clean_csvs(current_dir)
+        clean_solutions(current_dir)
         for model in handle:
             # print(model)
             interpreter = Interpreter(model, current_dir)

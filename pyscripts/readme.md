@@ -12,8 +12,9 @@ to let clingo solve for as much as `number-of-models` stable models using the gi
 
 `number-of-models` cannot be omitted.
 
-It is going to create/overwrite the content inside a `csv` folder in the same directory as the script.  
+It is going to create/overwrite the content inside a `solutions` folder in the same directory as the script.  
 It will contain one numerated folder for each solution which is split into timetables for each class, teacher and room.
+There is also going to be an `asp` file which contains the whole timetable.
 
 ## `util/csvhandler.py`
 

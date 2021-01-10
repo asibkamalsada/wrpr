@@ -75,21 +75,28 @@ class Interpreter:
         self.write_teachers()
         self.write_classes()
         self.write_rooms()
+        self.write_asp()
+
+    def write_asp(self):
+        path = os.path.join(self.directory, 'solutions', str(self.model_n))
+        os.makedirs(path, exist_ok=True)
+        with open(os.path.join(path, 'tt' + str(self.model_n) + '.asp'), 'w', newline='') as asp_file:
+            asp_file.write('. '.join([str(x) for x in self.symbols]) + '.')
 
     def write_teachers(self):
         for teacher, content in self.teachers_csv.items():
-            csvhandler.write_csv(os.path.join(self.directory, 'csv', str(self.model_n), 'teachers'),
+            csvhandler.write_csv(os.path.join(self.directory, 'solutions', str(self.model_n), 'teachers'),
                                  'teacher_' + str(teacher) + '.csv',
                                  content)
 
     def write_classes(self):
         for (grade, class_), content in self.classes_csv.items():
-            csvhandler.write_csv(os.path.join(self.directory, 'csv', str(self.model_n), 'classes'),
+            csvhandler.write_csv(os.path.join(self.directory, 'solutions', str(self.model_n), 'classes'),
                                  'class_' + str(grade) + '_' + str(class_) + '.csv',
                                  content)
 
     def write_rooms(self):
         for room, content in self.rooms_csv.items():
-            csvhandler.write_csv(os.path.join(self.directory, 'csv', str(self.model_n), 'rooms'),
+            csvhandler.write_csv(os.path.join(self.directory, 'solutions', str(self.model_n), 'rooms'),
                                  'room_' + str(room) + '.csv',
                                  content)
