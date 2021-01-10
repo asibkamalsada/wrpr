@@ -104,7 +104,7 @@ class Interpreter:
     def write_group(self, group, name):
         base_dir = os.path.join(self.directory, 'solutions', str(self.model_n), name)
         for x, terms in group.items():
-            filename = '{}_{}'.format(name, x)
+            filename = '{}_{}'.format(name, str(x).replace(' ', ''))
 
             csvhandler.write_csv(os.path.join(base_dir, 'csv'),
                                  filename + '.csv',
@@ -112,6 +112,6 @@ class Interpreter:
 
             print('{}: {}'.format(x, terms2dict_field(terms)))
 
-            htmlhandler.write_classes(os.path.join(base_dir, 'html'),
-                                      filename + '.html',
-                                      terms2dict_field(terms))
+            htmlhandler.write_html(os.path.join(base_dir, 'html'),
+                                   filename + '.html',
+                                   terms2dict_field(terms))
