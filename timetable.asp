@@ -42,6 +42,19 @@ teaches(t,en).
 teaches(u,bio).
 teaches(u,ph).
 
+classTeacher(a,5,a).
+classTeacher(b,5,b). 
+classTeacher(c,6,a). 
+classTeacher(d,6,b). 
+classTeacher(e,7,a). 
+classTeacher(f,7,b). 
+classTeacher(g,8,a). 
+classTeacher(h,8,b). 
+classTeacher(i,9,a). 
+classTeacher(j,9,b). 
+classTeacher(k,10,a). 
+classTeacher(l,10,b).
+
 class(
     5..10,a;
     5..10,b
@@ -256,7 +269,6 @@ firstlesson(C,N,X) :- class(C,N), slot(S), S = 1, X = #count{days(W) : timetable
 latelesson(C,N,W,X) :- class(C,N), weekday(W), slot(S), S > 6, X = #count{slots(S) : timetable(W,S,_,C,N,_,_)}.
 #minimize {X@5: latelesson(C,N,W,X)}.
 
-
 %block lesson
 
 blocklesson(X,Y,W,C,N,50):-block(X,Y), slot(X), slot(Y), weekday(W), class(C,N), subject(J), timetable(W,X,_,C,N,J,_), timetable(W,Y,_,C,N,J,_).
@@ -265,6 +277,26 @@ blocklesson(X,Y,W,C,N,0):-block(X,Y), weekday(W), class(C,N), subject(J), subjec
 #maximize {Z@9:blocklesson(X,Y,W,C,N,Z)}.
 
 
+% Möglichst viele Stunden mit Klassenlehrer
+classTeacherLessons(C, N, X) :- classTeacher(T, C, N), X = #count{ (W, S) : timetable(W, S, T, C, N, _, _) }.
+#maximize { X@10 : classTeacherLessons(_, _, X) }.
+
+% Klassenraum könnte man analog regeln - insofern das im Input wäre...
+
+
+% Möglichst gleichmäßige Anzahl Stunden für Klassen je Tag
+classLessonsAverage(C, N, X) :- class(C, N), X1 = #count{ (W, S): timetable(W, S, _, C, N, _, _) }, X = X1/5.
+classLessons(W, C, N, X) :- class(C, N), weekday(W), X = #count{ S: timetable(W, S, _, _, C, N, _, _) }.
+#minimize { X@4 : classLessons(_, W, C, X1), classLessonsAverage(W, C, N, X2), X=|X1-X2| }.
+
+% Möglichst gleichmäßige Anzahl Stunden je Fach und Lehrer
+subjectLessonsAverage(T, X) :- teacher(T), X1 = #count{ (W, S): timetable(W, S, T, _, _, _, _) }, X=X1/2.
+teacherSubjectLessons(T, J, X) :- teacher(T), subject(J), X = #count{ (W, S): timetable(W, S, T, _, _, J, _) }.
+#minimize { X@4 : teacherSubjectLessons(T, J, X1), subjectLessonsAverage(J, X2), X=|X1-X2| }.
+
+
+
 #show timetable/7.
 %#show blocklesson/6.
+
 
