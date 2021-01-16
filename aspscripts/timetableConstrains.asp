@@ -17,8 +17,7 @@
 :- #count{timp(R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S, _); weekday(W).
 
 % Cardinaltiy constraint that maximum classes per week is correct
-classSubjectTimes(A, B, J, X) :- #sum{ H, W, S : timetable(W, S, T, A, B, J, R), slot(S, H) }=X, class(A, B), subject(J).
-:- classSubjectTimes(A, _, J, X1), subjectTimes(J, A, X2), X1!=X2.
+:- #sum{ H, W, S : timetable(W, S, T, A, B, J, R), slot(S, H) }=X1, class(A, B), subjectTimes(J, A, X2), X1!=X2.
 
 % Cardinaltiy constraint that one teacher will only teach one subject per slot
 :- #count{T: timetable(W,S,T,A,B,J,R)} > 1, class(A,B), subject(J).
@@ -51,20 +50,15 @@ freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 % Teacher only have to teach their maximum amount of hours per week
 :- #sum{H, W, S: timetable(W, S, T, A, B, J, R), slot(S, H) } > Y, teacher(T), maxHourse(T,Y).
 
-% A teacher has a maximum of 2 lessons in a row (possibly block lessons)
-:- timetable(W, S, T, _, _, _, _), timetable(W, S+1, T, _, _, _, _), timetable(W, S+2, T, _, _, _, _).
+% Connected Lessons of a teacher, needed for the following constraints
+connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
+connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), Y=V+1.
 
-% TODO which of these two approaches is better???
-%connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
-%connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), |Y - V| == 1.
-%:- connectedTeacher(T,W,S,W,Y), |S - Y| > 2.
-
+% A teacher has a maximum of 3 lessons in a row (possibly block lessons)
+:- connectedTeacher(T,W,S,W,Y), (S-Y)>2.
 
 % A teacher has a maximum of 2 free periods in a row (on a non-free day)
-:- timetable(W, _, T, _, _, _, _), slot(S, _), not timetable(W, S, T, _, _, _, _), not timetable(W, S+1, T, _, _, _, _).
-
-% This will slowdown the solving alot
-%:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>3.
+:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, |B - X|>3.
 
 %---------------------------------------------------------------------------------------------------------------
 % Class constraints 
