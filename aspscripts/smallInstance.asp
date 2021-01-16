@@ -14,6 +14,7 @@ maxHourse(X, 20) :- teacher(X).
 % Every class in the school and the corresponding classteacher
 class(1, a). classTeacher(a,1,a).
 class(1, b). classTeacher(b,1,b).
+class(1, c). classTeacher(c,1,c).
 
 % Every subject and the lessons per week that this lesson is taught
 subject(ma). subjectTimes(ma, 1, 3).
