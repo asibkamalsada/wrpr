@@ -2,7 +2,7 @@
 -------------------------- Optimization Rules to filter timetables ----------------------------
 *%
 
-% A class should start at the first lesson and should not have to many late lessons a day 
+% A class should start at the first lesson and should not have too many late lessons a week
 firstlesson(C,N,X) :- class(C,N), slot(S, _), S = 1, X = #count{days(W) : timetable(W,S,_,C,N,_,_)}.
 #maximize {X@10:firstlesson(C,N,X)}.
 
@@ -10,7 +10,7 @@ latelesson(C,N,W,X) :- class(C,N), weekday(W), slot(S, _), S > 6, X = #count{slo
 #minimize {X@5: latelesson(C,N,W,X)}.
 
 
-% A class should have lots of lessons with there class Teacher
+% A class should have lots of lessons with their class teacher
 classTeacherLessons(C, N, X) :- classTeacher(T, C, N), X = #count{ (W, S) : timetable(W, S, T, C, N, _, _) }.
 #maximize { X@10 : classTeacherLessons(_, _, X) }.
 

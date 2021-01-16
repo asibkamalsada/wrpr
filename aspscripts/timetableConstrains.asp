@@ -16,14 +16,14 @@
 % Cardinaltiy constraint enforcing that no class has two subjects at the same time
 :- #count{timp(R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S, _); weekday(W).
 
-% Cardinaltiy constaint that maximum classes per week is correct
+% Cardinaltiy constraint that maximum classes per week is correct
 classSubjectTimes(A, B, J, X) :- #sum{ H, W, S : timetable(W, S, T, A, B, J, R), slot(S, H) }=X, class(A, B), subject(J).
 :- classSubjectTimes(A, _, J, X1), subjectTimes(J, A, X2), X1!=X2.
 
-% Cardinaltiy constaint that one teacher will only teach one subject per slot
+% Cardinaltiy constraint that one teacher will only teach one subject per slot
 :- #count{T: timetable(W,S,T,A,B,J,R)} > 1, class(A,B), subject(J).
 
-% Constrains that all classes that need a specialist room will be taught in them 
+% Constraints that all classes that need a specialist room will be taught in them 
 :- timetable(W,S,T,C,N,J,R), subject(J), J=phy, room(R), not physRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=chem, room(R), not chemRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=bio, room(R), not bioRoom(R).
@@ -32,7 +32,7 @@ classSubjectTimes(A, B, J, X) :- #sum{ H, W, S : timetable(W, S, T, A, B, J, R),
 :- timetable(W,S,T,C,N,J,R), subject(J), J=ku, room(R), not artRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), J=spo, room(R), not gym(R).
 
-% Constrains that all classes that don't need a specialist room will not be taught in them 
+% Constraints that all classes that don't need a specialist room will not be taught in them 
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=phy, room(R), physRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=chem, room(R), chemRoom(R).
 :- timetable(W,S,T,C,N,J,R), subject(J), not J=bio, room(R), bioRoom(R).
@@ -48,10 +48,10 @@ classSubjectTimes(A, B, J, X) :- #sum{ H, W, S : timetable(W, S, T, A, B, J, R),
 freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 :- teacher(T), not freeday(T,_).
 
-% Teacher only have to teacher there maximum amount of hours per week
+% Teacher only have to teach their maximum amount of hours per week
 :- #sum{H, W, S: timetable(W, S, T, A, B, J, R), slot(S, H) } > Y, teacher(T), maxHourse(T,Y).
 
-% A teacher has a maximum of 2 lessons in a row (while one of these two could be a block lesson with two hours)
+% A teacher has a maximum of 2 lessons in a row (possibly block lessons)
 :- timetable(W, S, T, _, _, _, _), timetable(W, S+1, T, _, _, _, _), timetable(W, S+2, T, _, _, _, _).
 
 % TODO which of these two approaches is better???
