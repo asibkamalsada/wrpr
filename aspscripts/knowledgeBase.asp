@@ -199,11 +199,16 @@ subjectTimes(inf, 10, 1).
 
 %---------------------------------------------------------------------------------------------------------------
 
-% Every posible weekday and slot a lesson can take place 
+% Every posible weekday and slot a lesson can take place
+% A slot can have one or two hours
 
 weekday(1..5).
-slot(1..9).
-block(1,2; 4,5; 8,9).
+slot(1, 2).
+slot(2, 1).
+slot(3, 2).
+slot(4, 1).
+slot(5, 1).
+slot(6, 2).
 
 %---------------------------------------------------------------------------------------------------------------
 

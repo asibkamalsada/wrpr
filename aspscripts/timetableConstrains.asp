@@ -4,20 +4,21 @@
 
 % Create all possible timetables
 % For each teacher and each timeslot, pick at most one subject which they'll teach and a class and room for them
-{timetable(W,S,T,A,B,J,R):class(A,B),room(R),teaches(T,J)} <= 1 :- weekday(W);slot(S);teacher(T).
+{timetable(W,S,T,A,B,J,R):class(A,B),room(R),teaches(T,J)} <= 1 :- weekday(W);slot(S, _);teacher(T).
 
 %---------------------------------------------------------------------------------------------------------------
 % Basic constraints 
 
 % Cardinality constraint enforcing that no room is occupied more than once in the same timeslot on the timetable.
-:- #count{uses(T,A,B,J):timetable(W,S,T,A,B,J,R)} > 1; weekday(W); slot(S); room(R).
+:- #count{uses(T,A,B,J):timetable(W,S,T,A,B,J,R)} > 1; weekday(W); slot(S, _); room(R).
 
 
 % Cardinaltiy constraint enforcing that no class has two subjects at the same time
-:- #count{timp(R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S); weekday(W).
+:- #count{timp(R): timetable(W,S,T,A,B,J,R)} > 1; class(A,B); slot(S, _); weekday(W).
 
 % Cardinaltiy constaint that maximum classes per week is correct
-:- #count{temp(A,B): timetable(A,B,T,C,N,S,R)} != X; class(C,N); subject(S); subjectTimes(S,C,X).
+classSubjectTimes(A, B, J, X) :- #sum{ H, W, S : timetable(W, S, T, A, B, J, R), slot(S, H) }=X, class(A, B), subject(J).
+:- classSubjectTimes(A, _, J, X1), subjectTimes(J, A, X2), X1!=X2.
 
 % Cardinaltiy constaint that one teacher will only teach one subject per slot
 :- #count{T: timetable(W,S,T,A,B,J,R)} > 1, class(A,B), subject(J).
@@ -48,18 +49,22 @@ freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 :- teacher(T), not freeday(T,_).
 
 % Teacher only have to teacher there maximum amount of hours per week
-:- #count{xmp(A,B): timetable(A,B,T,C,N,S,Z)} > Y, teacher(T), maxHourse(T,Y).
+:- #sum{H, W, S: timetable(W, S, T, A, B, J, R), slot(S, H) } > Y, teacher(T), maxHourse(T,Y).
 
-% A teacher has a maximum of 3 lessons in a row 
+% A teacher has a maximum of 2 lessons in a row (while one of these two could be a block lesson with two hours)
+:- timetable(W, S, T, _, _, _, _), timetable(W, S+1, T, _, _, _, _), timetable(W, S+2, T, _, _, _, _).
 
-connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
-connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), |Y - V| == 1.
+% TODO which of these two approaches is better???
+%connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
+%connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), |Y - V| == 1.
+%:- connectedTeacher(T,W,S,W,Y), |S - Y| > 2.
 
-:- connectedTeacher(T,W,S,W,Y), |S - Y| > 2.
 
-% A teacher has a maximum of 2 free periods in a row 
+% A teacher has a maximum of 2 free periods in a row (on a non-free day)
+:- timetable(W, _, T, _, _, _, _), slot(S, _), not timetable(W, S, T, _, _, _, _), not timetable(W, S+1, T, _, _, _, _).
+
 % This will slowdown the solving alot
-:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>3.
+%:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, A < B, X < Y, |B - X|>3.
 
 %---------------------------------------------------------------------------------------------------------------
 % Class constraints 
