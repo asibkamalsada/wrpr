@@ -19,8 +19,8 @@ classTeacherLessons(C, N, X) :- classTeacher(T, C, N), X = #count{ (W, S) : time
 
 % A class should have approximately the same number of hours per day  
 classLessonsAverage(C, N, X) :- class(C, N), X1 = #count{ (W, S): timetable(W, S, _, C, N, _, _) }, X = X1/5.
-classLessons(W, C, N, X) :- class(C, N), weekday(W), X = #count{ S: timetable(W, S, _, _, C, N, _, _) }.
-#minimize { X@4 : classLessons(_, W, C, X1), classLessonsAverage(W, C, N, X2), X=|X1-X2| }.
+classLessons(W, C, N, X) :- class(C, N), weekday(W), X = #count{ S: timetable(W, S, _, C, N, _, _) }.
+#minimize { X@4 : classLessons(_, W, C, X1), classLessonsAverage(C, N, X2), X=|X1-X2| }.
 
 
 % A class should have almost equal numbers of hours per subject and teacher
