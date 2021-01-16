@@ -1,42 +1,43 @@
 import os
 
-html_table = '<style>' \
-             'table, th, td {' \
-             'border: 1px solid black;' \
-             'border-collapse: collapse;' \
-             '}' \
-             '</style>\n' \
-             '<table><thead>\n' \
-             '<tr><td>slot</td><td>Mo</td><td>Di</td><td>Mi</td><td>Do</td><td>Fr</td></tr>\n' \
-             '</thead><tbody>\n' \
-             '<tr><td>1</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>2</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>3</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>4</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>5</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>6</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>7</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>8</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '<tr><td>9</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
-             '</tbody></table>'
-
+HTML_HEAD = [
+    '<style>',
+    'table, th, td {',
+    'border: 1px solid black;',
+    'border-collapse: collapse;',
+    'padding: 0.5em;',
+    '}',
+    'th {'
+    'font-weight: bold;'
+    '}',
+    '</style>',
+    '<table><thead>',
+    '<tr><td>Slot</td><td>Mo</td><td>Di</td><td>Mi</td><td>Do</td><td>Fr</td></tr>',
+    '</thead><tbody>',
+]
+HTML_FOOT = [
+    '</tbody></table>',
+]
 
 def write_html(path, file_name, dicts):
     os.makedirs(path, exist_ok=True)
     with open(os.path.join(path, file_name), 'w', newline='') as html_file:
-        # TODO dynamic range
-        h = html_table
-        for slot in range(1, 10):
+        rows = list()
+        # The slots are the keys of the "dicts" dict, we want to iterate from 1 to last slot
+        for slot in range(1, max(dicts.keys())+1):
+            # Cells of a row for every day of the week
+            row = [str(slot)]
             for weekday in range(1, 6):
-                t = dicts.get(slot, {}).get(weekday, None)
-                if t:
-                    cell = '{} {}<br>{}<br>{}<br>{}'.format(
-                        t['grade'], t['class'], t['subject'], t['teacher'], t['room']
-                    )
-                    h = h.replace('$$$', cell, 1)
-                else:
-                    h = h.replace('$$$', '', 1)
-        html_file.write(h)
+                try:
+                    t = dicts[slot][weekday]
+                    cell = f"{t['grade']}{t['class']}<br/><b>{t['subject']}</b><br/>{t['teacher']}<br/>{t['room']}"
+                except KeyError:
+                    cell = ""
+                row.append(cell)
+            # Row to string
+            rows.append("<tr><td>" + "</td><td>".join(row) + "</td></tr>")
+        doc = "\n".join(HTML_HEAD) + "".join(rows) + "\n".join(HTML_FOOT)
+        html_file.write(doc)
 
 
 """
