@@ -74,4 +74,7 @@ connected(A,B,W,S,W,S) :- timetable(W,S,_,A,B,_,_).
 connected(A,B,W,S,W,Y) :- timetable(W,S,_,A,B,_,_), timetable(W,V,_,A,B,_,_), connected(A,B,W,S,W,V),  timetable(W,Y,_,A,B,_,_), |Y - V| == 1.
 :- timetable(W,S,_,A,B,_,_), timetable(W,V,_,A,B,_,_), not connected(A,B,W,S,W,V).
 
+% Constraint for more atleast 5 classes a day (maybe 6, we should talk about it)
+:- class(A,B), weekday(W), #count{S :timetable(W,S,_,A,B,_,_)} < 5.
+
 #show timetable/7.
