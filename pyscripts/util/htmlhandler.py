@@ -20,8 +20,22 @@ html_table = '<style>' \
              '<tr><td>9</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td><td>$$$</td></tr>\n' \
              '</tbody></table>'
 
+html_teachers = '<style>' \
+                'table, th, td {' \
+                'border: 1px solid black;' \
+                'border-collapse: collapse;' \
+                '}' \
+                '.inlineTable {' \
+                'display: inline-block;' \
+                '}' \
+                '<button onclick="collapse(\'{}\')">{}</button>' \
+                '<table id=t{} class="inlineTable">' \
+                '<thead><tr><td>teachers</td></tr></thead>' \
+                '{}' \
+                '</table>'
 
-def write_html(path, file_name, dicts):
+
+def write_group(path, file_name, dicts):
     os.makedirs(path, exist_ok=True)
     with open(os.path.join(path, file_name), 'w', newline='') as html_file:
         # TODO dynamic range
@@ -38,6 +52,20 @@ def write_html(path, file_name, dicts):
                     h = h.replace('$$$', '', 1)
         html_file.write(h)
 
+
+"""
+def write_index(path):
+    os.makedirs(path, exist_ok=True)
+    with open(os.path.join(path, 'index.html'), 'w', newline='') as index:
+        for sub in next(os.walk(path))[1]:
+            teachers = os.path.join(sub, 'teachers', 'html')
+            classes = os.path.join(sub, 'classes', 'html')
+            rooms = os.path.join(sub, 'rooms', 'html')
+            '<a href="{}/html/"'
+"""
+
+if __name__ == '__main__':
+    pass
 
 """
 def html_structure(solutions_path):
