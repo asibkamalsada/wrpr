@@ -106,12 +106,12 @@ class Interpreter:
         for x, terms in group.items():
             filename = '{}_{}'.format(name, str(x).replace(' ', ''))
 
-            csvhandler.write_csv(os.path.join(base_dir, 'csv'),
-                                 filename + '.csv',
-                                 terms2csv(terms))
+            csvhandler.write_group(os.path.join(base_dir, 'csv'),
+                                   filename + '.csv',
+                                   terms2csv(terms))
 
             print('{}: {}'.format(x, terms2dict_field(terms)))
 
-            htmlhandler.write_html(os.path.join(base_dir, 'html'),
-                                   filename + '.html',
-                                   terms2dict_field(terms))
+            htmlhandler.write_group(os.path.join(base_dir, 'html'),
+                                    filename + '.html',
+                                    terms2dict_field(terms))
