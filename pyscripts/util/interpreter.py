@@ -59,7 +59,7 @@ def terms2dict_field(terms):
     for _dict in dicts:
         row = tt.get(_dict['slot'], dict())
         if _dict['weekday'] in row:
-            print('{} overwrites {}'.format(_dict, row[_dict['weekday']]))
+            print(f"{_dict} overwrites {row[_dict['weekday']]}")
         row[_dict['weekday']] = _dict
         tt[_dict['slot']] = row
     return tt
@@ -98,20 +98,20 @@ class Interpreter:
     def write_asp(self):
         path = os.path.join(self.directory, 'solutions', str(self.model_n))
         os.makedirs(path, exist_ok=True)
-        with open(os.path.join(path, 'tt{}.asp'.format(self.model_n)), 'w', newline='') as asp_file:
+        with open(os.path.join(path, f'tt{self.model_n}.asp'), 'w', newline='') as asp_file:
             asp_file.write('. '.join([str(x) for x in self.symbols]) + '.')
 
     def write_group(self, group, name):
         base_dir = os.path.join(self.directory, 'solutions', str(self.model_n), name)
         for x, terms in group.items():
-            filename = '{}_{}'.format(name, str(x).replace(' ', ''))
+            filename = f"{name}_{str(x).replace(' ', '')}"
 
-            csvhandler.write_csv(os.path.join(base_dir, 'csv'),
-                                 filename + '.csv',
-                                 terms2csv(terms))
+            csvhandler.write_group(os.path.join(base_dir, 'csv'),
+                                   filename + '.csv',
+                                   terms2csv(terms))
 
-            print('{}: {}'.format(x, terms2dict_field(terms)))
+            print(f'{x}: {terms2dict_field(terms)}')
 
-            htmlhandler.write_html(os.path.join(base_dir, 'html'),
-                                   filename + '.html',
-                                   terms2dict_field(terms))
+            htmlhandler.write_group(os.path.join(base_dir, 'html'),
+                                    filename + '.html',
+                                    terms2dict_field(terms))
