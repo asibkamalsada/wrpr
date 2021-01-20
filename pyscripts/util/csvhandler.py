@@ -87,18 +87,32 @@ def atom(x):
 
 
 def fn(fun, *args):
-    atoms = [atom(x) for x in args]
-    if not args:
-        raise Exception()
-
-    return fun + '(' + ', '.join(atoms) + ').'
+    return f"{fun}({', '.join([atom(x) for x in args])})."
 
 
 def main():
-    lines = csv2asp(sys.argv[1])
+    if len(sys.argv) != 3:
+        raise WrongOptionError('exactly 2 parameter are needed, path to the folder containing the csv'
+                               ' files and path to the file which will be written containing the asp')
 
-    for line in lines:
-        print(line)
+    try:
+        lines = csv2asp(sys.argv[1])
+    except FileNotFoundError:
+        raise WrongOptionError('could not open every csv file in the folder')
+
+    try:
+        with open(file=os.path.abspath(sys.argv[2]), mode='w', newline='') as asp_file:
+            file_str = '\n'.join(lines) + '\n'
+            asp_file.write(file_str)
+            print(file_str)
+    except OSError or FileNotFoundError:
+        raise WrongOptionError('could not write output file')
+
+
+class WrongOptionError(Exception):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 
 if __name__ == '__main__':
