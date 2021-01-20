@@ -37,7 +37,7 @@ def write_group(path, file_name, dicts):
                 row.append(cell)
             # Row to string
             rows.append("<tr><td>" + "</td><td>".join(row) + "</td></tr>")
-        doc = "\n".join(HTML_HEAD) + "".join(rows) + "\n".join(HTML_FOOT)
+        doc = "\n".join(HTML_HEAD) + "\n" + "\n".join(rows) + "\n" + "\n".join(HTML_FOOT)
         html_file.write(doc)
 
 

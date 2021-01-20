@@ -20,7 +20,7 @@ There is also going to be an `asp` file which contains the whole timetable.
 
 use the `util/csvhandler.py` script as follows:
 
-`python csvhandler.py folder/containing/csvs`
+`python csvhandler.py folder/containing/csvs file.asp`
 
 where the given folder has to contain the same `csv` files as in `bsp1` with the same formatting.  
 It will print the corresponding `asp` atoms, rules, etc to the command line.

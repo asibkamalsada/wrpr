@@ -43,12 +43,13 @@ def terms2csv(terms):
     timetable_csv = [{}, {}, {}, {}, {}, {}, {}, {}, {}]
     for term in terms:
         t = term.arguments
-        row_n = int(str(t[1])) - 1
-        if t[0] not in timetable_csv[row_n]:
+        slot = t[0].number
+        row_n = t[1].number - 1
+        if slot not in timetable_csv[row_n]:
             new_str = str(term)
         else:
-            new_str = timetable_csv[row_n][t[0]] + ' ' + str(term)
-        timetable_csv[row_n][t[0]] = new_str
+            new_str = timetable_csv[row_n][slot] + ' ' + str(term)
+        timetable_csv[row_n][slot] = new_str
 
     return timetable_csv
 
