@@ -1,6 +1,6 @@
 import os
-from pyscripts.util import csvhandler
-from pyscripts.util import htmlhandler
+from util import csvhandler
+from util import htmlhandler
 
 
 def group_teachers(terms):
