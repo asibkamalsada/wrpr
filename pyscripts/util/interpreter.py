@@ -48,7 +48,7 @@ def terms2csv(terms):
         if slot not in timetable_csv[row_n]:
             new_str = str(term)
         else:
-            new_str = timetable_csv[row_n][slot] + ' ' + str(term)
+            new_str = str(timetable_csv[row_n][slot]) + ' ' + str(term)
         timetable_csv[row_n][slot] = new_str
 
     return timetable_csv
