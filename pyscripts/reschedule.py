@@ -80,7 +80,7 @@ def handle_restrictions(ctl, r_r, t_r, solution):
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         raise Exception('not enough parameters')
 
     knowledgeBase = os.path.join(sys.argv[1], 'knowledgeBase.asp')
@@ -104,7 +104,7 @@ def main():
     ctl.load(ttConstraints)
     ctl.load(ttOptimization)
 
-    solve_and_write(ctl, 'rescheduled', 5)
+    solve_and_write(ctl, 'rescheduled', int(sys.argv[3]))
 
 
 if __name__ == '__main__':
