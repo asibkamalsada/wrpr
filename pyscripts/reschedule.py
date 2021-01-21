@@ -1,6 +1,12 @@
+import os
+import re
 import sys
 
 import clingo
+
+from pyscripts.util.interpreter import solve_and_write
+
+current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def handle_room(rooms):
@@ -22,18 +28,13 @@ def handle(lst, name):
         print(f'"{index}" is no valid index')
 
 
-def extract_restrictions():
-    ctl = clingo.Control()
-    # add knowledge base
-    ctl.load(sys.argv[1])
-
-    ctl.ground([('base', [])])
-
+def extract_restrictions(ctl):
     teachers = [symbolicatom.symbol for symbolicatom in ctl.symbolic_atoms.by_signature('teacher', 1)]
 
     rooms = [symbolicatom.symbol for symbolicatom in ctl.symbolic_atoms.by_signature('room', 1)]
 
-    restrictions = set()
+    t_r = set()
+    r_r = set()
 
     while True:
         another = input('add another restriction? [Y/n]\n')
@@ -51,20 +52,59 @@ def extract_restrictions():
             continue
 
         if option == 1:
-            restrictions.add(handle(rooms, 'room'))
+            r_r.add(handle(rooms, 'room'))
         if option == 2:
-            restrictions.add(handle(teachers, 'teacher'))
+            t_r.add(handle(teachers, 'teacher'))
 
-        print(f'current restrictions: {restrictions}\n')
+        print(f'current restrictions: {r_r}, {t_r}\n')
 
-    return restrictions
+    return r_r, t_r
+
+
+def handle_restrictions(ctl, r_r, t_r, solution):
+    for r in r_r:
+        solution = re.sub(r"timetable\([^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?," + str(r.arguments[0]) + r"\)\.", "",
+                          solution)
+        prg = f':- timetable(_, _, _, _, _, _, {r.arguments[0]}).'
+        ctl.add("base", [], prg)
+        # print(prg)
+    for t in t_r:
+        solution = re.sub(r"timetable\([^,]+?,[^,]+?," + str(t.arguments[0]) + r",[^,]+?,[^,]+?,[^,]+?,[^,]+?\)\.", "",
+                          solution)
+        prg = f':- timetable(_, _, {t.arguments[0]}, _, _, _, _).'
+        ctl.add("base", [], prg)
+        # print(prg)
+
+    ctl.add("base", [], solution)
+    ctl.ground([('base', [])])
 
 
 def main():
     if len(sys.argv) != 3:
         raise Exception('not enough parameters')
 
-    restrictions = extract_restrictions()
+    knowledgeBase = os.path.join(sys.argv[1], 'knowledgeBase.asp')
+    ttConstraints = os.path.join(sys.argv[1], 'timetableConstrains.asp')
+    ttOptimization = os.path.join(sys.argv[1], 'timetableOptimization.asp')
+    solution_p = sys.argv[2]
+
+    with open(solution_p, 'r') as file:
+        solution = file.read()
+
+    ctl = clingo.Control()
+    # add knowledge base
+    ctl.load(knowledgeBase)
+
+    ctl.ground([('base', [])])
+
+    r_r, t_r = extract_restrictions(ctl)
+
+    handle_restrictions(ctl, r_r, t_r, solution)
+
+    ctl.load(ttConstraints)
+    ctl.load(ttOptimization)
+
+    solve_and_write(ctl, 'rescheduled', 5)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,7 @@
 import os
+import shutil
+
+from clingo import Control
 from util import csvhandler
 from util import htmlhandler
 
@@ -97,13 +100,13 @@ class Interpreter:
         self.write_asp()
 
     def write_asp(self):
-        path = os.path.join(self.directory, 'solutions', str(self.model_n))
+        path = os.path.join(self.directory, str(self.model_n))
         os.makedirs(path, exist_ok=True)
         with open(os.path.join(path, f'tt{self.model_n}.asp'), 'w', newline='') as asp_file:
             asp_file.write('. '.join([str(x) for x in self.symbols]) + '.')
 
     def write_group(self, group, name):
-        base_dir = os.path.join(self.directory, 'solutions', str(self.model_n), name)
+        base_dir = os.path.join(self.directory, str(self.model_n), name)
         for x, terms in group.items():
             filename = f"{name}_{str(x).replace(' ', '')}"
 
@@ -116,3 +119,18 @@ class Interpreter:
             htmlhandler.write_group(os.path.join(base_dir, 'html'),
                                     filename + '.html',
                                     terms2dict_field(terms))
+
+
+def solve_and_write(ctl: Control, sol_folder, no_=0):
+    delete_folder(sol_folder)
+    ctl.configuration.solve.models = no_
+    with ctl.solve(yield_=True) as handle:
+        for model in handle:
+            # print(model)
+            interpreter = Interpreter(model, sol_folder)
+            interpreter.write_full()
+
+
+def delete_folder(directory):
+    if os.path.exists(directory) and os.path.isdir(directory):
+        shutil.rmtree(directory)
