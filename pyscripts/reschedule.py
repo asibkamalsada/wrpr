@@ -4,7 +4,7 @@ import sys
 
 import clingo
 
-from pyscripts.util.interpreter import solve_and_write
+from util.interpreter import solve_and_write
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
