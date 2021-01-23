@@ -2,21 +2,15 @@
 import os
 from typing import List
 
-import shutil
 import clingo
 import sys
 
 from util.interpreter import Interpreter
 
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 arg_names: List[str] = ['weekday', 'slot', 'teacher', 'grade', 'class', 'subject', 'room']
-
-
-def clean_solutions(directory):
-    work_dir = os.path.join(directory, 'solutions')
-    if os.path.exists(work_dir) and os.path.isdir(work_dir):
-        shutil.rmtree(work_dir)
 
 
 def main():
@@ -28,16 +22,12 @@ def main():
     # read asp program file
     for n in range(1, arg_n - 1):
         ctl.load(sys.argv[n])
-    ctl.configuration.solve.models = sys.argv[arg_n - 1]
     # standard grounding
     ctl.ground([('base', [])])
 
-    with ctl.solve(yield_=True) as handle:
-        clean_solutions(current_dir)
-        for model in handle:
-            # print(model)
-            interpreter = Interpreter(model, current_dir)
-            interpreter.write_full()
+    sol_folder = os.path.join(current_dir, 'solutions')
+    ctl.configuration.solve.models = sys.argv[arg_n - 1]
+    solve_and_write(ctl, sol_folder, no_=sys.argv[arg_n - 1])
 
 
 class TooFewArgumentsException(Exception):

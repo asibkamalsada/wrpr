@@ -20,7 +20,19 @@ There is also going to be an `asp` file which contains the whole timetable.
 
 use the `util/csvhandler.py` script as follows:
 
-`python csvhandler.py folder/containing/csvs`
+`python csvhandler.py folder/containing/csvs file.asp`
 
 where the given folder has to contain the same `csv` files as in `bsp1` with the same formatting.  
-It will print the corresponding `asp` atoms, rules, etc to the command line.
+It will print the corresponding `asp` atoms, rules, etc to the specified file.
+
+## `reschedule.py`
+
+use the `reschedule.py` script as follows:
+
+`python reschedule.py folder/containing/asps solution.asp number-of-models`
+
+where the given folder has to contain `knowledgeBase.asp`, `timetableConstrains.asp` and `timetableOptimization.asp` and
+the `solution.asp` has to be the file containing the timetable asp file currently in use.  
+It will create a subfolder `rescheduled` containing the newly found timetables (restricted by `number-of-models`) 
+with the user-defined restrictions.
+
