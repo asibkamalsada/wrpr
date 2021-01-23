@@ -55,7 +55,7 @@ connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
 connectedTeacher(T,W,S,W,Y) :- timetable(W,S,T,_,_,_,_), timetable(W,V,T,_,_,_,_), connectedTeacher(T,W,S,W,V),  timetable(W,Y,T,_,_,_,_), Y=V+1.
 
 % A teacher has a maximum of 3 lessons in a row (possibly block lessons)
-%:- connectedTeacher(T,W,S,W,Y), (S-Y)>2.
+%:- connectedTeacher(T,W,S,W,Y), |S-Y|>2.
 
 % A teacher has a maximum of 2 free periods in a row (on a non-free day)
 %:- timetable(W,_,T,_,_,_,_), connectedTeacher(T,W,A,W,B), connectedTeacher(T,W,X,W,Y), A < X, B < Y, |B - X|>3.
