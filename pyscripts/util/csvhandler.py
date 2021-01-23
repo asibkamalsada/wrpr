@@ -64,10 +64,8 @@ def csv2asp(path):
     for weekday in range(1, 6):
         lines.append(fn('weekday', weekday))
 
-    for slot in range(1, 10):
-        lines.append(fn('slot', slot))
-
-    lines.append('block(1,2; 4,5; 8,9).')
+    for slot, s in [(1, 2), (2, 1), (3, 2), (4, 1), (5, 1), (6, 2)]:
+        lines.append(fn('slot', slot, s))
 
     # this csv file is not really useful
     with open(os.path.join(path, 'timetable.csv'), newline='') as csv_file:

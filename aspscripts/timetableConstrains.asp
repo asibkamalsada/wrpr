@@ -48,7 +48,7 @@ freeday(T,W) :- teacher(T), weekday(W), not timetable(W,_,T,_,_,_,_).
 :- teacher(T), not freeday(T,_).
 
 % Teacher only have to teach their maximum amount of hours per week
-:- #sum{H, W, S: timetable(W, S, T, A, B, J, R), slot(S, H) } > Y, teacher(T), maxHourse(T,Y).
+:- #sum{H, W, S: timetable(W, S, T, A, B, J, R), slot(S, H) } > Y, teacher(T), maxHours(T,Y).
 
 % Connected Lessons of a teacher, needed for the following constraints
 connectedTeacher(T,W,S,W,S) :- timetable(W,S,T,_,_,_,_).
