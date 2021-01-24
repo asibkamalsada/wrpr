@@ -31,8 +31,8 @@ use the `reschedule.py` script as follows:
 
 `python reschedule.py folder/containing/asps solution.asp number-of-models`
 
-where the given folder has to contain `knowledgeBase.asp`, `timetableConstrains.asp` and `timetableOptimization.asp` and
-the `solution.asp` has to be the file containing the timetable asp file currently in use.  
+where the given folder has to contain `knowledgeBase.asp` and `substitutionPlan.asp`.
+The `solution.asp` has to be the file containing the timetable asp file currently in use.  
 It will create a subfolder `rescheduled` containing the newly found timetables (restricted by `number-of-models`) 
-with the user-defined restrictions.
+with the (via CLI) user-defined restrictions.
 

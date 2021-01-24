@@ -5,8 +5,7 @@ from typing import List
 import clingo
 import sys
 
-from util.interpreter import Interpreter
-
+from util.interpreter import solve_and_write
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -27,7 +26,7 @@ def main():
 
     sol_folder = os.path.join(current_dir, 'solutions')
     ctl.configuration.solve.models = sys.argv[arg_n - 1]
-    solve_and_write(ctl, sol_folder, no_=sys.argv[arg_n - 1])
+    solve_and_write(ctl, sol_folder, 'timetable', no_=sys.argv[arg_n - 1])
 
 
 class TooFewArgumentsException(Exception):

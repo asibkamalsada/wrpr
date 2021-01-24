@@ -8,10 +8,10 @@ from util import csvhandler
 from util import htmlhandler
 
 
-def group_teachers(terms):
+def group_teachers(terms, rule):
     teachers = {}
     for term in terms:
-        if term.match('timetable', 7):
+        if term.match(rule, 7):
             teacher = term.arguments[2]
             if teacher not in teachers:
                 teachers[teacher] = set()
@@ -20,10 +20,10 @@ def group_teachers(terms):
     return teachers
 
 
-def group_classes(terms):
+def group_classes(terms, rule):
     classes = {}
     for term in terms:
-        if term.match('timetable', 7):
+        if term.match(rule, 7):
             class_ = (term.arguments[3], term.arguments[4])
             if class_ not in classes:
                 classes[class_] = set()
@@ -32,10 +32,10 @@ def group_classes(terms):
     return classes
 
 
-def group_rooms(terms):
+def group_rooms(terms, rule):
     rooms = {}
     for term in terms:
-        if term.match('timetable', 7):
+        if term.match(rule, 7):
             room = term.arguments[6]
             if room not in rooms:
                 rooms[room] = set()
@@ -84,16 +84,18 @@ def term2dict(term):
 
 
 class Interpreter:
-    def __init__(self, model, directory):
+    def __init__(self, model, directory, rule):
         self.directory = directory
+
+        self.rule = rule
 
         self.symbols = model.symbols(shown=True)
 
         self.model_n = model.number
 
-        self.teachers = group_teachers(self.symbols)
-        self.classes = group_classes(self.symbols)
-        self.rooms = group_rooms(self.symbols)
+        self.teachers = group_teachers(self.symbols, self.rule)
+        self.classes = group_classes(self.symbols, self.rule)
+        self.rooms = group_rooms(self.symbols, self.rule)
 
     def write_full(self):
         self.write_group(self.teachers, 'teachers')
@@ -123,30 +125,16 @@ class Interpreter:
                                     terms2dict_field(terms))
 
 
-def solve_and_write(ctl: Control, sol_folder, no_=0):
+def solve_and_write(ctl: Control, sol_folder, rule, no_=0):
     delete_folder(sol_folder)
     ctl.configuration.solve.models = no_
     with ctl.solve(yield_=True) as handle:
         for model in handle:
             # print(model)
-            interpreter = Interpreter(model, sol_folder)
+            interpreter = Interpreter(model, sol_folder, rule)
             interpreter.write_full()
 
 
 def delete_folder(directory):
     if os.path.exists(directory) and os.path.isdir(directory):
         shutil.rmtree(directory)
-
-
-def compare_asps(p1, p2):
-    with open(p1, 'r') as pp1:
-        tts1 = set(re.findall(r"timetable\([^)]+?\)", pp1.read()))
-    with open(p2, 'r') as pp2:
-        tts2 = set(re.findall(r"timetable\([^)]+?\)", pp2.read()))
-
-    tt12 = tts1.difference(tts2)
-    tt21 = tts2.difference(tts1)
-
-    print('wtf')
-
-

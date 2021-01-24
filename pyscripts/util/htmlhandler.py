@@ -39,12 +39,3 @@ def write_group(path, file_name, dicts):
             rows.append("<tr><td>" + "</td><td>".join(row) + "</td></tr>")
         doc = "\n".join(HTML_HEAD) + "\n" + "\n".join(rows) + "\n" + "\n".join(HTML_FOOT)
         html_file.write(doc)
-
-
-"""
-def html_structure(solutions_path):
-    _, folders, _ = os.walk(solutions_path)
-    for folder in folders:
-        abs_folder = os.path.join(solutions_path, folder)
-
-"""

@@ -1,15 +1,9 @@
 import os
-import re
 import sys
 
 import clingo
 
-
-from util import interpreter
 from util.interpreter import solve_and_write
-
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
 
 
 def handle_room(rooms):
@@ -64,28 +58,12 @@ def extract_restrictions(ctl):
     return r_r, t_r
 
 
-def handle_restrictions(ctl, r_r, t_r, solution):
+def handle_restrictions(ctl, r_r, t_r):
     for r in r_r:
-        solution = re.sub(
-            r"timetable\([^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?," + re.escape(str(r.arguments[0])) + r"\)\.", "",
-            solution)
-        prg = f':- timetable(_, _, _, _, _, _, {r.arguments[0]}).'
-        ctl.add("base", [], prg)
-        # print(prg)
+        ctl.add("base", [], f'blocked({r.arguments[0]}).')
     for t in t_r:
-        solution = re.sub(
-            r"timetable\([^,]+?,[^,]+?," + re.escape(str(t.arguments[0])) + r",[^,]+?,[^,]+?,[^,]+?,[^)]+?\)\.", "",
-            solution)
-        prg = f':- timetable(_, _, {t.arguments[0]}, _, _, _, _).'
-        ctl.add("base", [], prg)
-        # print(prg)
+        ctl.add("base", [], f'ill({t.arguments[0]}).')
 
-    tts = list(re.findall(r"timetable\([^)]+?\)", solution))
-    fst = '{' + '; '.join(tts) + '}.'
-    weighted = [f'1@20:{tt}' for index, tt in enumerate(tts, start=1)]
-    snd = '#maximize {' + '; '.join(weighted) + '}.'
-
-    ctl.add("base", [], f'{fst}\n{snd}')
     ctl.ground([('base', [])])
 
     print('stop')
@@ -96,12 +74,8 @@ def main():
         raise Exception('not enough parameters')
 
     knowledgeBase = os.path.join(sys.argv[1], 'knowledgeBase.asp')
-    ttConstraints = os.path.join(sys.argv[1], 'timetableConstrains.asp')
-    ttOptimization = os.path.join(sys.argv[1], 'timetableOptimization.asp')
+    subs = os.path.join(sys.argv[1], 'substitutionPlan.asp')
     solution_p = sys.argv[2]
-
-    with open(solution_p, 'r') as file:
-        solution = file.read()
 
     ctl = clingo.Control()
     # add knowledge base
@@ -111,16 +85,14 @@ def main():
 
     r_r, t_r = extract_restrictions(ctl)
 
-    handle_restrictions(ctl, r_r, t_r, solution)
+    handle_restrictions(ctl, r_r, t_r)
 
-    ctl.load(ttConstraints)
-    ctl.load(ttOptimization)
+    ctl.load(subs)
+    ctl.load(solution_p)
 
     ctl.ground([('base', [])])
 
-    solve_and_write(ctl, 'rescheduled', int(sys.argv[3]))
-
-    interpreter.compare_asps(solution_p, solution_p.replace('solutions', 'rescheduled'))
+    solve_and_write(ctl, sol_folder='rescheduled', rule='re', no_=int(sys.argv[3]))
 
 
 if __name__ == '__main__':
