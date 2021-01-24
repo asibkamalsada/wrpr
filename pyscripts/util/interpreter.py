@@ -1,5 +1,7 @@
 import os
+import re
 import shutil
+import sys
 
 from clingo import Control
 from util import csvhandler
@@ -63,7 +65,7 @@ def terms2dict_field(terms):
     for _dict in dicts:
         row = tt.get(_dict['slot'], dict())
         if _dict['weekday'] in row:
-            print(f"{_dict} overwrites {row[_dict['weekday']]}")
+            print(f"{_dict} overwrites {row[_dict['weekday']]}", file=sys.stderr)
         row[_dict['weekday']] = _dict
         tt[_dict['slot']] = row
     return tt
@@ -114,7 +116,7 @@ class Interpreter:
                                    filename + '.csv',
                                    terms2csv(terms))
 
-            print(f'{x}: {terms2dict_field(terms)}')
+            # print(f'{x}: {terms2dict_field(terms)}')
 
             htmlhandler.write_group(os.path.join(base_dir, 'html'),
                                     filename + '.html',
@@ -134,3 +136,17 @@ def solve_and_write(ctl: Control, sol_folder, no_=0):
 def delete_folder(directory):
     if os.path.exists(directory) and os.path.isdir(directory):
         shutil.rmtree(directory)
+
+
+def compare_asps(p1, p2):
+    with open(p1, 'r') as pp1:
+        tts1 = set(re.findall(r"timetable\([^)]+?\)", pp1.read()))
+    with open(p2, 'r') as pp2:
+        tts2 = set(re.findall(r"timetable\([^)]+?\)", pp2.read()))
+
+    tt12 = tts1.difference(tts2)
+    tt21 = tts2.difference(tts1)
+
+    print('wtf')
+
+

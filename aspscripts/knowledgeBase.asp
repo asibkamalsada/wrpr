@@ -49,7 +49,7 @@ teaches(u,bio).
 teaches(u,ph).
 
 %max hours a teacher may teach per week 
-maxHourse(X,30) :- teacher(X).
+maxHours(X,30) :- teacher(X).
 
 %---------------------------------------------------------------------------------------------------------------
 

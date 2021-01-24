@@ -4,7 +4,10 @@ import sys
 
 import clingo
 
+
+from util import interpreter
 from util.interpreter import solve_and_write
+
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -63,20 +66,29 @@ def extract_restrictions(ctl):
 
 def handle_restrictions(ctl, r_r, t_r, solution):
     for r in r_r:
-        solution = re.sub(r"timetable\([^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?," + str(r.arguments[0]) + r"\)\.", "",
-                          solution)
+        solution = re.sub(
+            r"timetable\([^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?,[^,]+?," + re.escape(str(r.arguments[0])) + r"\)\.", "",
+            solution)
         prg = f':- timetable(_, _, _, _, _, _, {r.arguments[0]}).'
         ctl.add("base", [], prg)
         # print(prg)
     for t in t_r:
-        solution = re.sub(r"timetable\([^,]+?,[^,]+?," + str(t.arguments[0]) + r",[^,]+?,[^,]+?,[^,]+?,[^,]+?\)\.", "",
-                          solution)
+        solution = re.sub(
+            r"timetable\([^,]+?,[^,]+?," + re.escape(str(t.arguments[0])) + r",[^,]+?,[^,]+?,[^,]+?,[^)]+?\)\.", "",
+            solution)
         prg = f':- timetable(_, _, {t.arguments[0]}, _, _, _, _).'
         ctl.add("base", [], prg)
         # print(prg)
 
-    ctl.add("base", [], solution)
+    tts = list(re.findall(r"timetable\([^)]+?\)", solution))
+    fst = '{' + '; '.join(tts) + '}.'
+    weighted = [f'1@20:{tt}' for index, tt in enumerate(tts, start=1)]
+    snd = '#maximize {' + '; '.join(weighted) + '}.'
+
+    ctl.add("base", [], f'{fst}\n{snd}')
     ctl.ground([('base', [])])
+
+    print('stop')
 
 
 def main():
@@ -104,7 +116,11 @@ def main():
     ctl.load(ttConstraints)
     ctl.load(ttOptimization)
 
+    ctl.ground([('base', [])])
+
     solve_and_write(ctl, 'rescheduled', int(sys.argv[3]))
+
+    interpreter.compare_asps(solution_p, solution_p.replace('solutions', 'rescheduled'))
 
 
 if __name__ == '__main__':
