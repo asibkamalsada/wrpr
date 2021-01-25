@@ -129,10 +129,16 @@ def solve_and_write(ctl: Control, sol_folder, rule, no_=0):
     delete_folder(sol_folder)
     ctl.configuration.solve.models = no_
     with ctl.solve(yield_=True) as handle:
+        count = 0
+        m = 'cancel search with keyboard interrupt if number of models is set to 0 (or wait for it to find an optimum)'
+        print(m)
         for model in handle:
+            count += 1
+            print(f'found model {count}, printing (DO NOT cancel)')
             # print(model)
             interpreter = Interpreter(model, sol_folder, rule)
             interpreter.write_full()
+            print(m)
 
 
 def delete_folder(directory):

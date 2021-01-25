@@ -24,6 +24,8 @@ def main():
     # standard grounding
     ctl.ground([('base', [])])
 
+    print('grounding complete')
+
     sol_folder = os.path.join(current_dir, 'solutions')
     ctl.configuration.solve.models = sys.argv[arg_n - 1]
     solve_and_write(ctl, sol_folder, 'timetable', no_=sys.argv[arg_n - 1])
