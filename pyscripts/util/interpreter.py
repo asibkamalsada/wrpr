@@ -138,6 +138,7 @@ def solve_and_write(ctl: Control, sol_folder, rule, no_=0):
             # print(model)
             interpreter = Interpreter(model, sol_folder, rule)
             interpreter.write_full()
+            print(m)
 
 
 def delete_folder(directory):
