@@ -134,11 +134,11 @@ def solve_and_write(ctl: Control, sol_folder, rule, no_=0):
         print(m)
         for model in handle:
             count += 1
-            print(f'found model {count}, printing (DO NOT cancel)')
+            print(f'found model {count}, printing (DO NOT cancel)', end=' ')
             # print(model)
             interpreter = Interpreter(model, sol_folder, rule)
             interpreter.write_full()
-            print(m)
+            print('done')
 
 
 def delete_folder(directory):
